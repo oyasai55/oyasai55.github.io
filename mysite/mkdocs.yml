@@ -1,0 +1,41 @@
+# サイト名、URL、GitリポジトリのURL、自分の名前を入れる
+site_name: oyasai
+repo_url: https://github.com/oyasai55/oyasai55.github.io
+site_url: https://fereria.github.io/mkdocs_sample/
+site_author: oyasai
+
+## Materialテーマの見た目(色とか)
+theme:
+  favicon: "favicon.ico"
+  language: ja
+  name: material
+  palette:
+    accent: orange
+    primary: teal
+  features:
+    - navigation.tabs # Tab表示
+    - navigation.expand #左の記事一覧をデフォルトで開いた状態に
+  icon:
+    repo: fontawesome/brands/github
+
+# TwitterやGithubのリンクを指定できる
+# アイコンはサイト右下に表示される
+# icon と link はワンセット。
+# https://fontawesome.com/
+# このサイトの Free Iconsの名前をみて fontawesome/<name> で指定できる。
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/oyasai55
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/fereria
+    - icon: fontawesome/solid/bookmark
+      link: https://zenn.dev/remiria
+    - icon: fontawesome/solid/cannabis
+      link: http://localhost
+
+# Googleアナリティクスを使いたい場合は↓を追加
+# google_analytics:
+#   - UA-#######
+#   - auto
+
