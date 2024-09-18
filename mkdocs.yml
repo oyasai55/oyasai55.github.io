@@ -1,7 +1,7 @@
 # サイト名、URL、GitリポジトリのURL、自分の名前を入れる
 site_name: oyasai
 repo_url: https://github.com/oyasai55/oyasai55.github.io
-site_url: https://fereria.github.io/mkdocs_sample/
+site_url: https://oyasai55.github.io/
 site_author: oyasai
 
 ## Materialテーマの見た目(色とか)
