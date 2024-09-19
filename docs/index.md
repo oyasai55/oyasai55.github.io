@@ -1,17 +1,41 @@
-# Welcome to MkDocs
+# Oyasai's Portforio
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+---
 
-## Commands
+## :bootstrap-north-star: Jobs 
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+* Researcher [2024-now]
+    * Engineering
+    * Bioinfomatics (studying)
 
-## Project layout
+* Software Engineer [2019-now]
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+    * `C/C++`
+    * `C#`
+    * `Python`
+    * `R/RStudio`
+
+
+## :bootstrap-north-star: Interests
+
+Engineering
+
+* Database/Data Analytics
+* Generative AI
+* Information Security
+
+Research
+
+* Mentalhealth/Wellbeing
+* Genom Analytics
+
+
+## :bootstrap-north-star: Hobbies
+
+Watching Baseball Game
+
+* Tokyo Yakult Swallows
+
+Mahjong
+
+Snowboarding
