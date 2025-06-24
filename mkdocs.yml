@@ -17,7 +17,11 @@ theme:
     - navigation.expand #左の記事一覧をデフォルトで開いた状態に
   icon:
     repo: fontawesome/brands/github
-
+    
+nav:
+  - Home: index.md
+  - Tools:
+      - 防球ネット除去ツール: tools/net-remover.md
 # TwitterやGithubのリンクを指定できる
 # アイコンはサイト右下に表示される
 # icon と link はワンセット。
