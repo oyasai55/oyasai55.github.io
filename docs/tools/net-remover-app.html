@@ -3,13 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI防球ネット除去ツール - 被写体認識版</title>
-    
-    <!-- TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
-    <!-- BodyPix -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
-    
+    <title>防球ネット除去ツール - パターン検出版</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -29,31 +23,23 @@
             color: #333;
             text-align: center;
         }
-        .status {
-            text-align: center;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .status.loading {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .status.ready {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-        }
         .controls {
             display: flex;
             gap: 10px;
             margin: 20px 0;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: flex-start;
+        }
+        .control-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 250px;
+        }
+        .control-group h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
         }
         button {
             padding: 10px 20px;
@@ -63,16 +49,14 @@
             color: white;
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.3s;
+            margin: 5px;
         }
         button:hover {
             background: #0056b3;
-            transform: translateY(-1px);
         }
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
         input[type="file"] {
             display: none;
@@ -84,23 +68,28 @@
             border-radius: 5px;
             cursor: pointer;
             display: inline-block;
-            transition: all 0.3s;
+            margin: 5px;
         }
         .file-label:hover {
             background: #218838;
-            transform: translateY(-1px);
         }
         .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             margin: 10px 0;
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
+        }
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
         }
         input[type="range"] {
-            width: 200px;
+            width: 100%;
+        }
+        .slider-value {
+            display: inline-block;
+            min-width: 40px;
+            text-align: right;
+            font-weight: bold;
+            color: #007bff;
         }
         .canvas-container {
             display: grid;
@@ -124,6 +113,7 @@
             border: 2px solid #dee2e6;
             border-radius: 4px;
             background: white;
+            cursor: crosshair;
         }
         .info {
             background: #e3f2fd;
@@ -140,20 +130,6 @@
             background: #f8f9fa;
             border-radius: 8px;
         }
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: #007bff;
-            transition: width 0.3s;
-            width: 0%;
-        }
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #007bff;
@@ -167,97 +143,110 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .mask-preview {
+        .debug-canvas {
             display: none;
-            margin: 20px 0;
-            text-align: center;
+            margin-top: 20px;
         }
-        .options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
+        .debug-toggle {
+            background: #6c757d;
+            font-size: 14px;
+            padding: 8px 16px;
         }
-        .option-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
+        .debug-toggle:hover {
+            background: #5a6268;
         }
-        .option-card:hover {
-            border-color: #007bff;
-            transform: translateY(-2px);
+        .checkbox-container {
+            margin: 10px 0;
         }
-        .checkbox-wrapper {
+        .checkbox-container label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            cursor: pointer;
         }
-        .result-comparison {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .region-selector {
+            margin: 10px 0;
+        }
+        .region-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🤖 AI防球ネット除去ツール</h1>
-        
-        <div id="status" class="status loading">
-            モデルを読み込み中... しばらくお待ちください
-        </div>
+        <h1>🎯 防球ネット除去ツール - パターン検出版</h1>
         
         <div class="info">
             <h3>💡 このツールの特徴</h3>
             <ul>
-                <li><strong>AI人物認識</strong>: TensorFlow.jsで選手を自動検出</li>
-                <li><strong>選択的処理</strong>: 被写体は保護し、背景のネットのみ除去</li>
-                <li><strong>高精度</strong>: 機械学習による正確な領域分離</li>
-                <li><strong>完全無料</strong>: すべての処理をブラウザ内で実行</li>
+                <li><strong>ネットパターン自動検出</strong>: 黒い規則的なパターンを検出</li>
+                <li><strong>ピント領域保護</strong>: シャープな部分は処理しない</li>
+                <li><strong>適応的処理</strong>: 画像の特性に応じて自動調整</li>
+                <li><strong>領域選択可能</strong>: 処理範囲を手動で指定可能</li>
             </ul>
         </div>
 
         <div class="controls">
-            <label class="file-label" for="imageInput">
-                📷 画像を選択
-            </label>
-            <input type="file" id="imageInput" accept="image/*">
+            <div class="control-group">
+                <h4>📁 ファイル操作</h4>
+                <label class="file-label" for="imageInput">
+                    📷 画像を選択
+                </label>
+                <input type="file" id="imageInput" accept="image/*">
+                <button id="processBtn" disabled>🔧 処理実行</button>
+                <button id="saveBtn" disabled>💾 保存</button>
+                <button class="debug-toggle" id="debugBtn">🔍 デバッグ表示</button>
+            </div>
             
-            <button id="processBtn" disabled>🎯 ネット除去実行</button>
-            <button id="showMaskBtn" disabled>👤 認識結果を表示</button>
-            <button id="saveBtn" disabled>💾 保存</button>
-        </div>
-
-        <div class="options">
-            <div class="option-card">
-                <h4>除去強度</h4>
+            <div class="control-group">
+                <h4>⚙️ 基本設定</h4>
                 <div class="slider-container">
+                    <label>
+                        黒レベル閾値: <span class="slider-value" id="blackThresholdLabel">80</span>
+                    </label>
+                    <input type="range" id="blackThreshold" min="30" max="150" value="80">
+                </div>
+                <div class="slider-container">
+                    <label>
+                        除去強度: <span class="slider-value" id="strengthLabel">7</span>
+                    </label>
                     <input type="range" id="strength" min="1" max="10" value="7">
-                    <span id="strengthLabel">7</span>
                 </div>
-            </div>
-            
-            <div class="option-card">
-                <h4>処理オプション</h4>
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="enhanceEdges" checked>
-                    <label for="enhanceEdges">エッジ強調</label>
-                </div>
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="preserveDetails" checked>
-                    <label for="preserveDetails">ディテール保護</label>
-                </div>
-            </div>
-            
-            <div class="option-card">
-                <h4>セグメンテーション精度</h4>
                 <div class="slider-container">
-                    <input type="range" id="segmentationThreshold" min="0.1" max="0.9" step="0.1" value="0.5">
-                    <span id="segmentationLabel">0.5</span>
+                    <label>
+                        ネット検出感度: <span class="slider-value" id="sensitivityLabel">5</span>
+                    </label>
+                    <input type="range" id="sensitivity" min="1" max="10" value="5">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h4>🎯 詳細設定</h4>
+                <div class="slider-container">
+                    <label>
+                        ピント保護強度: <span class="slider-value" id="focusProtectionLabel">7</span>
+                    </label>
+                    <input type="range" id="focusProtection" min="0" max="10" value="7">
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="autoDetect" checked>
+                        ネットパターン自動検出
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="preserveTexture" checked>
+                        テクスチャ保護
+                    </label>
+                </div>
+                <div class="region-selector">
+                    <button id="selectRegionBtn">📐 処理範囲を選択</button>
+                    <div class="region-info" id="regionInfo">全体を処理</div>
                 </div>
             </div>
         </div>
@@ -265,14 +254,6 @@
         <div class="processing" id="processing">
             <div class="spinner"></div>
             <p id="processingMessage">処理中...</p>
-            <div class="progress-bar">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
-        </div>
-
-        <div class="mask-preview" id="maskPreview">
-            <h3>🎭 AI認識結果（赤: 被写体, 青: 背景）</h3>
-            <canvas id="maskCanvas"></canvas>
         </div>
 
         <div class="canvas-container">
@@ -285,69 +266,65 @@
                 <canvas id="resultCanvas"></canvas>
             </div>
         </div>
+
+        <div class="debug-canvas" id="debugCanvasContainer">
+            <h3>デバッグ情報</h3>
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <h3>ネット検出マップ</h3>
+                    <canvas id="netDetectionCanvas"></canvas>
+                </div>
+                <div class="canvas-wrapper">
+                    <h3>ピントマップ</h3>
+                    <canvas id="focusMapCanvas"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        class AINetRemover {
+        class PatternBasedNetRemover {
             constructor() {
                 this.originalCanvas = document.getElementById('originalCanvas');
                 this.resultCanvas = document.getElementById('resultCanvas');
-                this.maskCanvas = document.getElementById('maskCanvas');
+                this.netDetectionCanvas = document.getElementById('netDetectionCanvas');
+                this.focusMapCanvas = document.getElementById('focusMapCanvas');
+                
                 this.originalCtx = this.originalCanvas.getContext('2d');
                 this.resultCtx = this.resultCanvas.getContext('2d');
-                this.maskCtx = this.maskCanvas.getContext('2d');
+                this.netDetectionCtx = this.netDetectionCanvas.getContext('2d');
+                this.focusMapCtx = this.focusMapCanvas.getContext('2d');
                 
                 this.originalImage = null;
-                this.bodyPixNet = null;
-                this.segmentation = null;
+                this.isSelectingRegion = false;
+                this.selectedRegion = null;
+                this.startPoint = null;
                 
-                this.init();
-            }
-            
-            async init() {
-                try {
-                    this.updateStatus('loading', 'TensorFlow.js モデルを読み込み中...');
-                    
-                    // BodyPixモデルの読み込み
-                    this.bodyPixNet = await bodyPix.load({
-                        architecture: 'MobileNetV1',
-                        outputStride: 16,
-                        multiplier: 0.75,
-                        quantBytes: 2
-                    });
-                    
-                    this.updateStatus('ready', '準備完了！画像を選択してください');
-                    this.setupEventListeners();
-                } catch (error) {
-                    console.error('モデル読み込みエラー:', error);
-                    this.updateStatus('error', 'モデルの読み込みに失敗しました');
-                }
-            }
-            
-            updateStatus(type, message) {
-                const status = document.getElementById('status');
-                status.className = `status ${type}`;
-                status.textContent = message;
-            }
-            
-            updateProgress(progress, message) {
-                document.getElementById('processingMessage').textContent = message;
-                document.getElementById('progressBar').style.width = `${progress}%`;
+                this.setupEventListeners();
             }
             
             setupEventListeners() {
+                // ファイル入力
                 document.getElementById('imageInput').addEventListener('change', (e) => this.loadImage(e));
+                
+                // ボタン
                 document.getElementById('processBtn').addEventListener('click', () => this.processImage());
-                document.getElementById('showMaskBtn').addEventListener('click', () => this.toggleMaskPreview());
                 document.getElementById('saveBtn').addEventListener('click', () => this.save());
+                document.getElementById('debugBtn').addEventListener('click', () => this.toggleDebug());
+                document.getElementById('selectRegionBtn').addEventListener('click', () => this.startRegionSelection());
                 
-                document.getElementById('strength').addEventListener('input', (e) => {
-                    document.getElementById('strengthLabel').textContent = e.target.value;
+                // スライダー
+                const sliders = ['blackThreshold', 'strength', 'sensitivity', 'focusProtection'];
+                sliders.forEach(id => {
+                    document.getElementById(id).addEventListener('input', (e) => {
+                        document.getElementById(id + 'Label').textContent = e.target.value;
+                    });
                 });
                 
-                document.getElementById('segmentationThreshold').addEventListener('input', (e) => {
-                    document.getElementById('segmentationLabel').textContent = e.target.value;
-                });
+                // キャンバスでの領域選択
+                this.originalCanvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
+                this.originalCanvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                this.originalCanvas.addEventListener('mouseup', (e) => this.onMouseUp(e));
             }
             
             loadImage(event) {
@@ -361,7 +338,8 @@
                         this.originalImage = img;
                         this.displayImage(img);
                         document.getElementById('processBtn').disabled = false;
-                        this.updateStatus('ready', '画像が読み込まれました。処理を実行してください');
+                        this.selectedRegion = null;
+                        document.getElementById('regionInfo').textContent = '全体を処理';
                     };
                     img.src = e.target.result;
                 };
@@ -380,406 +358,535 @@
                     height *= ratio;
                 }
                 
-                this.originalCanvas.width = width;
-                this.originalCanvas.height = height;
-                this.resultCanvas.width = width;
-                this.resultCanvas.height = height;
-                this.maskCanvas.width = width;
-                this.maskCanvas.height = height;
+                // すべてのキャンバスのサイズを設定
+                [this.originalCanvas, this.resultCanvas, this.netDetectionCanvas, this.focusMapCanvas].forEach(canvas => {
+                    canvas.width = width;
+                    canvas.height = height;
+                });
                 
                 this.originalCtx.drawImage(img, 0, 0, width, height);
                 this.resultCtx.drawImage(img, 0, 0, width, height);
             }
             
             async processImage() {
-                if (!this.originalImage || !this.bodyPixNet) return;
+                if (!this.originalImage) return;
                 
                 document.getElementById('processing').style.display = 'block';
                 document.getElementById('processBtn').disabled = true;
                 
+                // 少し遅延を入れてUIを更新
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
                 try {
-                    // Step 1: セグメンテーション
-                    this.updateProgress(20, 'AI で人物を検出中...');
-                    await this.performSegmentation();
+                    const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
+                    const { width, height } = this.resultCanvas;
                     
-                    // Step 2: マスク生成
-                    this.updateProgress(40, 'マスクを生成中...');
-                    const mask = await this.generateMask();
+                    // Step 1: ネットパターンの検出
+                    document.getElementById('processingMessage').textContent = 'ネットパターンを検出中...';
+                    const netMask = this.detectNetPattern(imageData, width, height);
+                    
+                    // Step 2: ピント領域の検出
+                    document.getElementById('processingMessage').textContent = 'ピント領域を解析中...';
+                    const focusMap = this.detectFocusAreas(imageData, width, height);
                     
                     // Step 3: ネット除去処理
-                    this.updateProgress(60, '背景のネットを除去中...');
-                    await this.removeNetWithMask(mask);
+                    document.getElementById('processingMessage').textContent = 'ネットを除去中...';
+                    const processed = this.removeNetWithMasks(imageData, netMask, focusMap, width, height);
                     
-                    // Step 4: 最終処理
-                    this.updateProgress(80, '画質を最適化中...');
-                    await this.finalizeImage();
+                    // Step 4: 結果を表示
+                    this.resultCtx.putImageData(processed, 0, 0);
                     
-                    this.updateProgress(100, '完了！');
+                    // デバッグ表示を更新
+                    this.updateDebugVisualization(netMask, focusMap, width, height);
                     
-                    document.getElementById('showMaskBtn').disabled = false;
                     document.getElementById('saveBtn').disabled = false;
-                    this.updateStatus('ready', '処理が完了しました');
                     
                 } catch (error) {
                     console.error('処理エラー:', error);
-                    this.updateStatus('error', '処理中にエラーが発生しました');
+                    alert('処理中にエラーが発生しました');
                 } finally {
                     document.getElementById('processing').style.display = 'none';
                     document.getElementById('processBtn').disabled = false;
                 }
             }
             
-            async performSegmentation() {
-                const threshold = parseFloat(document.getElementById('segmentationThreshold').value);
+            detectNetPattern(imageData, width, height) {
+                const data = imageData.data;
+                const blackThreshold = parseInt(document.getElementById('blackThreshold').value);
+                const sensitivity = parseInt(document.getElementById('sensitivity').value) / 10;
+                const autoDetect = document.getElementById('autoDetect').checked;
                 
-                // 人物セグメンテーション実行
-                this.segmentation = await this.bodyPixNet.segmentPerson(this.originalCanvas, {
-                    flipHorizontal: false,
-                    internalResolution: 'medium',
-                    segmentationThreshold: threshold
-                });
-            }
-            
-            async generateMask() {
-                const { width, height } = this.resultCanvas;
-                const mask = new ImageData(width, height);
+                const netMask = new Float32Array(width * height);
                 
-                // セグメンテーション結果をマスクに変換
-                for (let i = 0; i < this.segmentation.data.length; i++) {
-                    const isPerson = this.segmentation.data[i] === 1;
-                    const pixelIndex = i * 4;
-                    
-                    // 人物部分は白（255）、背景は黒（0）
-                    const value = isPerson ? 255 : 0;
-                    mask.data[pixelIndex] = value;
-                    mask.data[pixelIndex + 1] = value;
-                    mask.data[pixelIndex + 2] = value;
-                    mask.data[pixelIndex + 3] = 255;
+                // 1. 黒い線の検出
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const idx = (y * width + x) * 4;
+                        const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                        
+                        // 選択領域外はスキップ
+                        if (this.selectedRegion && !this.isInSelectedRegion(x, y)) {
+                            continue;
+                        }
+                        
+                        // 黒い部分を検出
+                        if (gray < blackThreshold) {
+                            netMask[y * width + x] = 1.0;
+                        }
+                    }
                 }
                 
-                // マスクの境界をぼかす（より自然な合成のため）
-                return this.blurMaskEdges(mask);
+                if (autoDetect) {
+                    // 2. 規則的なパターンの強調
+                    const enhanced = this.enhanceRegularPatterns(netMask, width, height, sensitivity);
+                    
+                    // 3. 細い線状のパターンのみを抽出
+                    return this.extractLinePatterns(enhanced, width, height);
+                }
+                
+                return netMask;
             }
             
-            blurMaskEdges(mask) {
-                const { width, height } = this.resultCanvas;
-                const blurred = new ImageData(width, height);
-                const radius = 3;
+            enhanceRegularPatterns(mask, width, height, sensitivity) {
+                const enhanced = new Float32Array(width * height);
+                const windowSize = 15; // パターン検出の窓サイズ
+                
+                for (let y = windowSize; y < height - windowSize; y++) {
+                    for (let x = windowSize; x < width - windowSize; x++) {
+                        // 垂直・水平方向の規則性をチェック
+                        let verticalScore = 0;
+                        let horizontalScore = 0;
+                        
+                        // 垂直方向の規則性
+                        for (let dy = -windowSize; dy <= windowSize; dy += 3) {
+                            if (mask[(y + dy) * width + x] > 0) {
+                                verticalScore++;
+                            }
+                        }
+                        
+                        // 水平方向の規則性
+                        for (let dx = -windowSize; dx <= windowSize; dx += 3) {
+                            if (mask[y * width + (x + dx)] > 0) {
+                                horizontalScore++;
+                            }
+                        }
+                        
+                        // 規則的なパターンがある場合は強調
+                        const patternScore = Math.max(verticalScore, horizontalScore) / (windowSize * 2 / 3);
+                        if (patternScore > 0.3 * sensitivity) {
+                            enhanced[y * width + x] = mask[y * width + x] * patternScore;
+                        }
+                    }
+                }
+                
+                return enhanced;
+            }
+            
+            extractLinePatterns(mask, width, height) {
+                const refined = new Float32Array(width * height);
+                const lineThickness = 3; // ネットの線の太さの最大値
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        if (mask[y * width + x] > 0) {
+                            // 線状のパターンかチェック
+                            let isLine = false;
+                            
+                            // 垂直線チェック
+                            let verticalCount = 0;
+                            for (let dy = -lineThickness; dy <= lineThickness; dy++) {
+                                const ny = y + dy;
+                                if (ny >= 0 && ny < height && mask[ny * width + x] > 0) {
+                                    verticalCount++;
+                                }
+                            }
+                            
+                            // 水平線チェック
+                            let horizontalCount = 0;
+                            for (let dx = -lineThickness; dx <= lineThickness; dx++) {
+                                const nx = x + dx;
+                                if (nx >= 0 && nx < width && mask[y * width + nx] > 0) {
+                                    horizontalCount++;
+                                }
+                            }
+                            
+                            // 細い線状のパターンの場合のみ採用
+                            if (verticalCount > lineThickness || horizontalCount > lineThickness) {
+                                isLine = true;
+                            }
+                            
+                            if (isLine) {
+                                refined[y * width + x] = mask[y * width + x];
+                            }
+                        }
+                    }
+                }
+                
+                return refined;
+            }
+            
+            detectFocusAreas(imageData, width, height) {
+                const data = imageData.data;
+                const focusMap = new Float32Array(width * height);
+                const focusProtection = parseInt(document.getElementById('focusProtection').value) / 10;
+                
+                // ラプラシアンフィルタでエッジ強度を計算（ピントの指標）
+                const laplacian = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
+                
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        let edgeStrength = 0;
+                        
+                        // 各カラーチャンネルでエッジ強度を計算
+                        for (let c = 0; c < 3; c++) {
+                            let sum = 0;
+                            for (let ky = -1; ky <= 1; ky++) {
+                                for (let kx = -1; kx <= 1; kx++) {
+                                    const idx = ((y + ky) * width + (x + kx)) * 4 + c;
+                                    const kernelIdx = (ky + 1) * 3 + (kx + 1);
+                                    sum += data[idx] * laplacian[kernelIdx];
+                                }
+                            }
+                            edgeStrength += Math.abs(sum);
+                        }
+                        
+                        // 正規化
+                        focusMap[y * width + x] = Math.min(1, edgeStrength / 765); // 765 = 255 * 3
+                    }
+                }
+                
+                // ガウシアンぼかしで平滑化
+                const smoothed = this.gaussianBlur2D(focusMap, width, height, 2);
+                
+                // 閾値処理でピント領域を明確化
+                const threshold = 0.2 * focusProtection;
+                for (let i = 0; i < smoothed.length; i++) {
+                    smoothed[i] = smoothed[i] > threshold ? smoothed[i] : 0;
+                }
+                
+                return smoothed;
+            }
+            
+            gaussianBlur2D(data, width, height, radius) {
+                const result = new Float32Array(data.length);
+                const kernel = this.createGaussianKernel2D(radius);
+                const kernelSize = kernel.length;
+                const halfSize = Math.floor(Math.sqrt(kernelSize) / 2);
                 
                 for (let y = 0; y < height; y++) {
                     for (let x = 0; x < width; x++) {
                         let sum = 0;
-                        let count = 0;
+                        let weightSum = 0;
                         
-                        for (let dy = -radius; dy <= radius; dy++) {
-                            for (let dx = -radius; dx <= radius; dx++) {
-                                const nx = x + dx;
-                                const ny = y + dy;
+                        for (let ky = -halfSize; ky <= halfSize; ky++) {
+                            for (let kx = -halfSize; kx <= halfSize; kx++) {
+                                const nx = x + kx;
+                                const ny = y + ky;
                                 
                                 if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                                    const idx = (ny * width + nx) * 4;
-                                    sum += mask.data[idx];
-                                    count++;
+                                    const kernelIdx = (ky + halfSize) * (halfSize * 2 + 1) + (kx + halfSize);
+                                    const weight = kernel[kernelIdx];
+                                    sum += data[ny * width + nx] * weight;
+                                    weightSum += weight;
                                 }
                             }
                         }
                         
-                        const idx = (y * width + x) * 4;
-                        const value = sum / count;
-                        blurred.data[idx] = value;
-                        blurred.data[idx + 1] = value;
-                        blurred.data[idx + 2] = value;
-                        blurred.data[idx + 3] = 255;
-                    }
-                }
-                
-                return blurred;
-            }
-            
-            async removeNetWithMask(mask) {
-                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
-                const data = imageData.data;
-                const { width, height } = this.resultCanvas;
-                const strength = parseInt(document.getElementById('strength').value);
-                const preserveDetails = document.getElementById('preserveDetails').checked;
-                
-                // 背景部分のみにネット除去処理を適用
-                const processed = this.applySelectiveNetRemoval(data, mask.data, width, height, strength);
-                
-                // エッジ強調が有効な場合
-                if (document.getElementById('enhanceEdges').checked) {
-                    this.enhanceEdges(processed, mask.data, width, height);
-                }
-                
-                // ディテール保護が有効な場合
-                if (preserveDetails) {
-                    this.preserveHighFrequencyDetails(processed, data, mask.data, width, height);
-                }
-                
-                imageData.data.set(processed);
-                this.resultCtx.putImageData(imageData, 0, 0);
-            }
-            
-            applySelectiveNetRemoval(data, mask, width, height, strength) {
-                const result = new Uint8ClampedArray(data.length);
-                const filterSize = 7;
-                
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        const idx = (y * width + x) * 4;
-                        const maskValue = mask[idx] / 255; // 0-1に正規化
-                        
-                        // 人物部分は元のまま保持
-                        if (maskValue > 0.8) {
-                            result[idx] = data[idx];
-                            result[idx + 1] = data[idx + 1];
-                            result[idx + 2] = data[idx + 2];
-                            result[idx + 3] = data[idx + 3];
-                        } else {
-                            // 背景部分にネット除去処理
-                            const filtered = this.applyNetRemovalFilter(
-                                data, width, height, x, y, filterSize, strength
-                            );
-                            
-                            // マスクの境界付近では徐々にブレンド
-                            const blendFactor = 1 - maskValue;
-                            result[idx] = data[idx] + (filtered.r - data[idx]) * blendFactor;
-                            result[idx + 1] = data[idx + 1] + (filtered.g - data[idx + 1]) * blendFactor;
-                            result[idx + 2] = data[idx + 2] + (filtered.b - data[idx + 2]) * blendFactor;
-                            result[idx + 3] = data[idx + 3];
-                        }
+                        result[y * width + x] = sum / weightSum;
                     }
                 }
                 
                 return result;
             }
             
-            applyNetRemovalFilter(data, width, height, x, y, filterSize, strength) {
-                // 方向性フィルタでネットパターンを除去
-                const samples = [];
-                const directions = [
-                    { angle: 0, weight: 1 },
-                    { angle: Math.PI / 4, weight: 0.7 },
-                    { angle: Math.PI / 2, weight: 1 },
-                    { angle: 3 * Math.PI / 4, weight: 0.7 }
-                ];
+            createGaussianKernel2D(radius) {
+                const size = Math.ceil(radius * 2) + 1;
+                const kernel = new Float32Array(size * size);
+                const sigma = radius / 3;
+                const center = Math.floor(size / 2);
+                let sum = 0;
                 
-                for (const dir of directions) {
-                    // 各方向でネットを避けてサンプリング
-                    for (let dist = filterSize; dist < filterSize * 3; dist += filterSize) {
-                        const nx = Math.round(x + Math.cos(dir.angle) * dist);
-                        const ny = Math.round(y + Math.sin(dir.angle) * dist);
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        const dx = x - center;
+                        const dy = y - center;
+                        const value = Math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+                        kernel[y * size + x] = value;
+                        sum += value;
+                    }
+                }
+                
+                // 正規化
+                for (let i = 0; i < kernel.length; i++) {
+                    kernel[i] /= sum;
+                }
+                
+                return kernel;
+            }
+            
+            removeNetWithMasks(imageData, netMask, focusMap, width, height) {
+                const data = new Uint8ClampedArray(imageData.data);
+                const strength = parseInt(document.getElementById('strength').value) / 10;
+                const preserveTexture = document.getElementById('preserveTexture').checked;
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const idx = (y * width + x) * 4;
+                        const mapIdx = y * width + x;
                         
-                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            const idx = (ny * width + nx) * 4;
-                            samples.push({
-                                r: data[idx],
-                                g: data[idx + 1],
-                                b: data[idx + 2],
-                                weight: dir.weight
-                            });
+                        // ネットが検出され、かつピントが合っていない領域のみ処理
+                        const netStrength = netMask[mapIdx];
+                        const focusStrength = focusMap[mapIdx];
+                        
+                        if (netStrength > 0.1 && focusStrength < 0.5) {
+                            // 処理強度を計算（ピントが合っている部分ほど弱く）
+                            const processingStrength = netStrength * (1 - focusStrength) * strength;
+                            
+                            // 周囲のピクセルから補間
+                            const interpolated = this.interpolatePixel(
+                                imageData.data, width, height, x, y, netMask, focusMap
+                            );
+                            
+                            // 元の色と補間色をブレンド
+                            for (let c = 0; c < 3; c++) {
+                                const original = data[idx + c];
+                                const target = interpolated[c];
+                                data[idx + c] = original + (target - original) * processingStrength;
+                            }
+                            
+                            // テクスチャ保護
+                            if (preserveTexture && focusStrength > 0.2) {
+                                const detail = this.getTextureDetail(imageData.data, width, height, x, y);
+                                for (let c = 0; c < 3; c++) {
+                                    data[idx + c] = Math.max(0, Math.min(255, data[idx + c] + detail[c] * 0.3));
+                                }
+                            }
                         }
                     }
                 }
                 
-                if (samples.length === 0) {
-                    const idx = (y * width + x) * 4;
-                    return { r: data[idx], g: data[idx + 1], b: data[idx + 2] };
+                return new ImageData(data, width, height);
+            }
+            
+            interpolatePixel(data, width, height, x, y, netMask, focusMap) {
+                const samples = [];
+                const maxRadius = 20;
+                
+                // スパイラル状にサンプリング（近い点を優先）
+                for (let radius = 3; radius <= maxRadius; radius += 2) {
+                    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+                        const nx = Math.round(x + Math.cos(angle) * radius);
+                        const ny = Math.round(y + Math.sin(angle) * radius);
+                        
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            const mapIdx = ny * width + nx;
+                            
+                            // ネットがなく、ある程度ピントが合っている点を採用
+                            if (netMask[mapIdx] < 0.1 || focusMap[mapIdx] > 0.3) {
+                                const idx = mapIdx * 4;
+                                const distance = Math.sqrt((nx - x) ** 2 + (ny - y) ** 2);
+                                const weight = 1 / (1 + distance * 0.1);
+                                
+                                samples.push({
+                                    r: data[idx],
+                                    g: data[idx + 1],
+                                    b: data[idx + 2],
+                                    weight: weight
+                                });
+                                
+                                if (samples.length >= 8) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (samples.length >= 8) {
+                        break;
+                    }
                 }
                 
                 // 加重平均
-                let sumR = 0, sumG = 0, sumB = 0, sumWeight = 0;
-                for (const sample of samples) {
-                    sumR += sample.r * sample.weight;
-                    sumG += sample.g * sample.weight;
-                    sumB += sample.b * sample.weight;
-                    sumWeight += sample.weight;
+                if (samples.length > 0) {
+                    let sumR = 0, sumG = 0, sumB = 0, sumWeight = 0;
+                    
+                    for (const sample of samples) {
+                        sumR += sample.r * sample.weight;
+                        sumG += sample.g * sample.weight;
+                        sumB += sample.b * sample.weight;
+                        sumWeight += sample.weight;
+                    }
+                    
+                    return [
+                        sumR / sumWeight,
+                        sumG / sumWeight,
+                        sumB / sumWeight
+                    ];
+                } else {
+                    // サンプルが見つからない場合は元の色を返す
+                    const idx = (y * width + x) * 4;
+                    return [data[idx], data[idx + 1], data[idx + 2]];
+                }
+            }
+            
+            getTextureDetail(data, width, height, x, y) {
+                const idx = (y * width + x) * 4;
+                const original = [data[idx], data[idx + 1], data[idx + 2]];
+                
+                // 3x3の平均
+                let sumR = 0, sumG = 0, sumB = 0, count = 0;
+                
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            const nIdx = (ny * width + nx) * 4;
+                            sumR += data[nIdx];
+                            sumG += data[nIdx + 1];
+                            sumB += data[nIdx + 2];
+                            count++;
+                        }
+                    }
                 }
                 
-                const idx = (y * width + x) * 4;
-                const originalR = data[idx];
-                const originalG = data[idx + 1];
-                const originalB = data[idx + 2];
+                const avgR = sumR / count;
+                const avgG = sumG / count;
+                const avgB = sumB / count;
                 
-                const filteredR = sumR / sumWeight;
-                const filteredG = sumG / sumWeight;
-                const filteredB = sumB / sumWeight;
+                // ディテール = 元の色 - 平均色
+                return [
+                    original[0] - avgR,
+                    original[1] - avgG,
+                    original[2] - avgB
+                ];
+            }
+            
+            updateDebugVisualization(netMask, focusMap, width, height) {
+                // ネット検出マップの可視化
+                const netImageData = this.netDetectionCtx.createImageData(width, height);
+                for (let i = 0; i < netMask.length; i++) {
+                    const value = Math.floor(netMask[i] * 255);
+                    netImageData.data[i * 4] = value;
+                    netImageData.data[i * 4 + 1] = 0;
+                    netImageData.data[i * 4 + 2] = 0;
+                    netImageData.data[i * 4 + 3] = 255;
+                }
+                this.netDetectionCtx.putImageData(netImageData, 0, 0);
                 
-                // 強度に応じてブレンド
-                const blend = strength / 10;
-                return {
-                    r: originalR + (filteredR - originalR) * blend,
-                    g: originalG + (filteredG - originalG) * blend,
-                    b: originalB + (filteredB - originalB) * blend
+                // フォーカスマップの可視化
+                const focusImageData = this.focusMapCtx.createImageData(width, height);
+                for (let i = 0; i < focusMap.length; i++) {
+                    const value = Math.floor(focusMap[i] * 255);
+                    focusImageData.data[i * 4] = 0;
+                    focusImageData.data[i * 4 + 1] = value;
+                    focusImageData.data[i * 4 + 2] = 0;
+                    focusImageData.data[i * 4 + 3] = 255;
+                }
+                this.focusMapCtx.putImageData(focusImageData, 0, 0);
+            }
+            
+            toggleDebug() {
+                const debugContainer = document.getElementById('debugCanvasContainer');
+                debugContainer.style.display = debugContainer.style.display === 'none' ? 'block' : 'none';
+            }
+            
+            startRegionSelection() {
+                this.isSelectingRegion = true;
+                this.originalCanvas.style.cursor = 'crosshair';
+                document.getElementById('regionInfo').textContent = 'クリック＆ドラッグで範囲を選択';
+            }
+            
+            onMouseDown(e) {
+                if (!this.isSelectingRegion) return;
+                
+                const rect = this.originalCanvas.getBoundingClientRect();
+                this.startPoint = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
                 };
             }
             
-            enhanceEdges(data, mask, width, height) {
-                // Sobelフィルタでエッジ検出し、被写体の輪郭を強調
-                const edges = this.detectEdges(data, width, height);
+            onMouseMove(e) {
+                if (!this.isSelectingRegion || !this.startPoint) return;
                 
-                for (let i = 0; i < data.length; i += 4) {
-                    const maskValue = mask[i] / 255;
-                    const edgeValue = edges[i / 4];
-                    
-                    // マスクの境界付近のエッジを強調
-                    if (maskValue > 0.2 && maskValue < 0.8 && edgeValue > 30) {
-                        const enhancement = 1.2;
-                        data[i] = Math.min(255, data[i] * enhancement);
-                        data[i + 1] = Math.min(255, data[i + 1] * enhancement);
-                        data[i + 2] = Math.min(255, data[i + 2] * enhancement);
-                    }
+                const rect = this.originalCanvas.getBoundingClientRect();
+                const currentPoint = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+                
+                // 選択範囲を描画
+                this.redrawOriginalImage();
+                this.originalCtx.strokeStyle = 'rgba(0, 123, 255, 0.8)';
+                this.originalCtx.lineWidth = 2;
+                this.originalCtx.setLineDash([5, 5]);
+                this.originalCtx.strokeRect(
+                    this.startPoint.x,
+                    this.startPoint.y,
+                    currentPoint.x - this.startPoint.x,
+                    currentPoint.y - this.startPoint.y
+                );
+                this.originalCtx.setLineDash([]);
+            }
+            
+            onMouseUp(e) {
+                if (!this.isSelectingRegion || !this.startPoint) return;
+                
+                const rect = this.originalCanvas.getBoundingClientRect();
+                const endPoint = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+                
+                this.selectedRegion = {
+                    x: Math.min(this.startPoint.x, endPoint.x),
+                    y: Math.min(this.startPoint.y, endPoint.y),
+                    width: Math.abs(endPoint.x - this.startPoint.x),
+                    height: Math.abs(endPoint.y - this.startPoint.y)
+                };
+                
+                this.isSelectingRegion = false;
+                this.startPoint = null;
+                this.originalCanvas.style.cursor = 'default';
+                
+                document.getElementById('regionInfo').textContent = 
+                    `選択範囲: ${Math.round(this.selectedRegion.width)}×${Math.round(this.selectedRegion.height)}px`;
+                
+                this.redrawOriginalImage();
+            }
+            
+            redrawOriginalImage() {
+                if (this.originalImage) {
+                    this.originalCtx.drawImage(
+                        this.originalImage,
+                        0, 0,
+                        this.originalCanvas.width,
+                        this.originalCanvas.height
+                    );
                 }
             }
             
-            detectEdges(data, width, height) {
-                const edges = new Float32Array(width * height);
-                const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
-                const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+            isInSelectedRegion(x, y) {
+                if (!this.selectedRegion) return true;
                 
-                for (let y = 1; y < height - 1; y++) {
-                    for (let x = 1; x < width - 1; x++) {
-                        let gx = 0, gy = 0;
-                        
-                        for (let ky = -1; ky <= 1; ky++) {
-                            for (let kx = -1; kx <= 1; kx++) {
-                                const idx = ((y + ky) * width + (x + kx)) * 4;
-                                const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
-                                const kernelIdx = (ky + 1) * 3 + (kx + 1);
-                                
-                                gx += gray * sobelX[kernelIdx];
-                                gy += gray * sobelY[kernelIdx];
-                            }
-                        }
-                        
-                        edges[y * width + x] = Math.sqrt(gx * gx + gy * gy);
-                    }
-                }
-                
-                return edges;
-            }
-            
-            preserveHighFrequencyDetails(processed, original, mask, width, height) {
-                // 高周波成分（ディテール）を保護
-                for (let i = 0; i < processed.length; i += 4) {
-                    const maskValue = mask[i] / 255;
-                    
-                    // 人物部分のディテールを強く保護
-                    if (maskValue > 0.5) {
-                        const detailR = original[i] - processed[i];
-                        const detailG = original[i + 1] - processed[i + 1];
-                        const detailB = original[i + 2] - processed[i + 2];
-                        
-                        // ディテールを部分的に復元
-                        const detailStrength = 0.3 * maskValue;
-                        processed[i] += detailR * detailStrength;
-                        processed[i + 1] += detailG * detailStrength;
-                        processed[i + 2] += detailB * detailStrength;
-                    }
-                }
-            }
-            
-            async finalizeImage() {
-                // 最終的な画質調整
-                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
-                const data = imageData.data;
-                
-                // 軽いシャープネス処理
-                this.applyUnsharpMask(data, this.resultCanvas.width, this.resultCanvas.height, 0.5);
-                
-                this.resultCtx.putImageData(imageData, 0, 0);
-            }
-            
-            applyUnsharpMask(data, width, height, amount) {
-                const blurred = this.gaussianBlur(data, width, height, 1);
-                
-                for (let i = 0; i < data.length; i += 4) {
-                    for (let c = 0; c < 3; c++) {
-                        const sharp = data[i + c] + (data[i + c] - blurred[i + c]) * amount;
-                        data[i + c] = Math.max(0, Math.min(255, sharp));
-                    }
-                }
-            }
-            
-            gaussianBlur(data, width, height, radius) {
-                const result = new Uint8ClampedArray(data.length);
-                const kernel = [0.06136, 0.24477, 0.38774, 0.24477, 0.06136]; // 5x1 Gaussian
-                
-                // 水平方向
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        for (let c = 0; c < 3; c++) {
-                            let sum = 0;
-                            for (let k = -2; k <= 2; k++) {
-                                const nx = Math.max(0, Math.min(width - 1, x + k));
-                                sum += data[(y * width + nx) * 4 + c] * kernel[k + 2];
-                            }
-                            result[(y * width + x) * 4 + c] = sum;
-                        }
-                        result[(y * width + x) * 4 + 3] = data[(y * width + x) * 4 + 3];
-                    }
-                }
-                
-                // 垂直方向
-                const final = new Uint8ClampedArray(data.length);
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        for (let c = 0; c < 3; c++) {
-                            let sum = 0;
-                            for (let k = -2; k <= 2; k++) {
-                                const ny = Math.max(0, Math.min(height - 1, y + k));
-                                sum += result[(ny * width + x) * 4 + c] * kernel[k + 2];
-                            }
-                            final[(y * width + x) * 4 + c] = sum;
-                        }
-                        final[(y * width + x) * 4 + 3] = data[(y * width + x) * 4 + 3];
-                    }
-                }
-                
-                return final;
-            }
-            
-            toggleMaskPreview() {
-                const maskPreview = document.getElementById('maskPreview');
-                
-                if (maskPreview.style.display === 'none' || !maskPreview.style.display) {
-                    // マスクを可視化
-                    const imageData = this.originalCtx.getImageData(0, 0, this.originalCanvas.width, this.originalCanvas.height);
-                    
-                    for (let i = 0; i < this.segmentation.data.length; i++) {
-                        const isPerson = this.segmentation.data[i] === 1;
-                        const pixelIndex = i * 4;
-                        
-                        if (isPerson) {
-                            // 人物部分を赤く着色
-                            imageData.data[pixelIndex] = Math.min(255, imageData.data[pixelIndex] + 100);
-                            imageData.data[pixelIndex + 1] *= 0.5;
-                            imageData.data[pixelIndex + 2] *= 0.5;
-                        } else {
-                            // 背景部分を青く着色
-                            imageData.data[pixelIndex] *= 0.5;
-                            imageData.data[pixelIndex + 1] *= 0.5;
-                            imageData.data[pixelIndex + 2] = Math.min(255, imageData.data[pixelIndex + 2] + 100);
-                        }
-                    }
-                    
-                    this.maskCtx.putImageData(imageData, 0, 0);
-                    maskPreview.style.display = 'block';
-                } else {
-                    maskPreview.style.display = 'none';
-                }
+                return x >= this.selectedRegion.x &&
+                       x < this.selectedRegion.x + this.selectedRegion.width &&
+                       y >= this.selectedRegion.y &&
+                       y < this.selectedRegion.y + this.selectedRegion.height;
             }
             
             save() {
                 const link = document.createElement('a');
-                link.download = 'net_removed_ai_' + Date.now() + '.png';
+                link.download = 'net_removed_pattern_' + Date.now() + '.png';
                 link.href = this.resultCanvas.toDataURL();
                 link.click();
             }
         }
         
         // アプリを初期化
-        const app = new AINetRemover();
+        const app = new PatternBasedNetRemover();
     </script>
 </body>
 </html>
