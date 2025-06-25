@@ -183,11 +183,14 @@
         <div class="info">
             <h3>💡 このツールの特徴</h3>
             <ul>
-                <li><strong>ネットパターン自動検出</strong>: 黒い規則的なパターンを検出</li>
+                <li><strong>高感度ネット検出</strong>: 薄く淡いネットも検出可能</li>
+                <li><strong>3つの検出手法</strong>: 局所コントラスト、周波数解析、方向性エッジ</li>
                 <li><strong>ピント領域保護</strong>: シャープな部分は処理しない</li>
                 <li><strong>適応的処理</strong>: 画像の特性に応じて自動調整</li>
-                <li><strong>領域選択可能</strong>: 処理範囲を手動で指定可能</li>
             </ul>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                ※ デバッグ表示で検出状況を確認できます（赤：ネット検出、緑：ピント領域）
+            </p>
         </div>
 
         <div class="controls">
@@ -206,9 +209,10 @@
                 <h4>⚙️ 基本設定</h4>
                 <div class="slider-container">
                     <label>
-                        黒レベル閾値: <span class="slider-value" id="blackThresholdLabel">80</span>
+                        コントラスト閾値: <span class="slider-value" id="blackThresholdLabel">30</span>
+                        <br><small style="color: #666;">低い値で薄いネットも検出</small>
                     </label>
-                    <input type="range" id="blackThreshold" min="30" max="150" value="80">
+                    <input type="range" id="blackThreshold" min="10" max="100" value="30">
                 </div>
                 <div class="slider-container">
                     <label>
@@ -218,9 +222,9 @@
                 </div>
                 <div class="slider-container">
                     <label>
-                        ネット検出感度: <span class="slider-value" id="sensitivityLabel">5</span>
+                        ネット検出感度: <span class="slider-value" id="sensitivityLabel">7</span>
                     </label>
-                    <input type="range" id="sensitivity" min="1" max="10" value="5">
+                    <input type="range" id="sensitivity" min="1" max="10" value="7">
                 </div>
             </div>
             
@@ -416,114 +420,280 @@
                 const sensitivity = parseInt(document.getElementById('sensitivity').value) / 10;
                 const autoDetect = document.getElementById('autoDetect').checked;
                 
+                // 複数の検出手法を組み合わせる
                 const netMask = new Float32Array(width * height);
                 
-                // 1. 黒い線の検出
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        const idx = (y * width + x) * 4;
-                        const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
-                        
+                if (autoDetect) {
+                    // 1. 局所コントラスト検出（薄いネット用）
+                    const contrastMask = this.detectLocalContrast(data, width, height, sensitivity);
+                    
+                    // 2. 周波数解析による周期的パターン検出
+                    const frequencyMask = this.detectPeriodicPatterns(data, width, height, sensitivity);
+                    
+                    // 3. 方向性エッジ検出（縦横の線検出）
+                    const directionalMask = this.detectDirectionalEdges(data, width, height, blackThreshold, sensitivity);
+                    
+                    // 4. マスクの統合
+                    for (let i = 0; i < netMask.length; i++) {
                         // 選択領域外はスキップ
+                        const x = i % width;
+                        const y = Math.floor(i / width);
                         if (this.selectedRegion && !this.isInSelectedRegion(x, y)) {
                             continue;
                         }
                         
-                        // 黒い部分を検出
-                        if (gray < blackThreshold) {
-                            netMask[y * width + x] = 1.0;
+                        // 各検出結果を統合（最大値を採用）
+                        netMask[i] = Math.max(
+                            contrastMask[i] * 0.5,    // 局所コントラストの重みを上げる
+                            frequencyMask[i] * 0.4,   // 周波数解析の重みも上げる
+                            directionalMask[i] * 0.3
+                        );
+                    }
+                    
+                    // 5. ノイズ除去と細線化
+                    return this.refineNetMask(netMask, width, height);
+                } else {
+                    // 手動モード：単純な閾値処理
+                    for (let y = 0; y < height; y++) {
+                        for (let x = 0; x < width; x++) {
+                            const idx = (y * width + x) * 4;
+                            const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                            
+                            if (this.selectedRegion && !this.isInSelectedRegion(x, y)) {
+                                continue;
+                            }
+                            
+                            if (gray < blackThreshold) {
+                                netMask[y * width + x] = 1.0;
+                            }
                         }
                     }
-                }
-                
-                if (autoDetect) {
-                    // 2. 規則的なパターンの強調
-                    const enhanced = this.enhanceRegularPatterns(netMask, width, height, sensitivity);
-                    
-                    // 3. 細い線状のパターンのみを抽出
-                    return this.extractLinePatterns(enhanced, width, height);
                 }
                 
                 return netMask;
             }
             
-            enhanceRegularPatterns(mask, width, height, sensitivity) {
-                const enhanced = new Float32Array(width * height);
-                const windowSize = 15; // パターン検出の窓サイズ
+            // 局所コントラスト検出（薄いネット用）
+            detectLocalContrast(data, width, height, sensitivity) {
+                const mask = new Float32Array(width * height);
+                const windowSize = 11;
+                const halfWindow = Math.floor(windowSize / 2);
                 
-                for (let y = windowSize; y < height - windowSize; y++) {
-                    for (let x = windowSize; x < width - windowSize; x++) {
-                        // 垂直・水平方向の規則性をチェック
-                        let verticalScore = 0;
-                        let horizontalScore = 0;
+                for (let y = halfWindow; y < height - halfWindow; y++) {
+                    for (let x = halfWindow; x < width - halfWindow; x++) {
+                        const idx = (y * width + x) * 4;
+                        const centerGray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
                         
-                        // 垂直方向の規則性
-                        for (let dy = -windowSize; dy <= windowSize; dy += 3) {
-                            if (mask[(y + dy) * width + x] > 0) {
-                                verticalScore++;
+                        // 周囲の平均輝度を計算
+                        let sum = 0;
+                        let count = 0;
+                        let maxDiff = 0;
+                        
+                        for (let dy = -halfWindow; dy <= halfWindow; dy++) {
+                            for (let dx = -halfWindow; dx <= halfWindow; dx++) {
+                                if (dx === 0 && dy === 0) continue;
+                                
+                                const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                                const gray = (data[nIdx] + data[nIdx + 1] + data[nIdx + 2]) / 3;
+                                sum += gray;
+                                count++;
+                                
+                                // 最大輝度差を記録
+                                maxDiff = Math.max(maxDiff, Math.abs(gray - centerGray));
                             }
                         }
                         
-                        // 水平方向の規則性
-                        for (let dx = -windowSize; dx <= windowSize; dx += 3) {
-                            if (mask[y * width + (x + dx)] > 0) {
-                                horizontalScore++;
-                            }
-                        }
+                        const avgGray = sum / count;
+                        const localContrast = Math.abs(centerGray - avgGray);
                         
-                        // 規則的なパターンがある場合は強調
-                        const patternScore = Math.max(verticalScore, horizontalScore) / (windowSize * 2 / 3);
-                        if (patternScore > 0.3 * sensitivity) {
-                            enhanced[y * width + x] = mask[y * width + x] * patternScore;
+                        // 薄いネットの検出：中心が周囲より暗く、コントラストが小さい
+                        if (centerGray < avgGray && localContrast > 3 * sensitivity && localContrast < 80) {
+                            // 薄いネットほど強調
+                            const normalizedContrast = localContrast / 80;
+                            mask[y * width + x] = normalizedContrast * (1 + (1 - normalizedContrast) * 0.5);
                         }
                     }
                 }
                 
-                return enhanced;
+                return mask;
             }
             
-            extractLinePatterns(mask, width, height) {
-                const refined = new Float32Array(width * height);
-                const lineThickness = 3; // ネットの線の太さの最大値
+            // 周波数解析による周期的パターン検出
+            detectPeriodicPatterns(data, width, height, sensitivity) {
+                const mask = new Float32Array(width * height);
+                const blockSize = 32;
                 
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        if (mask[y * width + x] > 0) {
-                            // 線状のパターンかチェック
-                            let isLine = false;
+                for (let by = 0; by < height - blockSize; by += blockSize / 2) {
+                    for (let bx = 0; bx < width - blockSize; bx += blockSize / 2) {
+                        // ブロック内の周期性を検出
+                        const periodicity = this.analyzeBlockPeriodicity(
+                            data, width, height, bx, by, blockSize
+                        );
+                        
+                        if (periodicity > 0.2 * sensitivity) {  // 閾値を下げて感度向上
+                            // ブロック内のピクセルに周期性スコアを設定
+                            for (let y = by; y < Math.min(by + blockSize, height); y++) {
+                                for (let x = bx; x < Math.min(bx + blockSize, width); x++) {
+                                    mask[y * width + x] = Math.max(mask[y * width + x], periodicity);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                return mask;
+            }
+            
+            // ブロック内の周期性を分析
+            analyzeBlockPeriodicity(data, width, height, bx, by, blockSize) {
+                // 水平・垂直方向の輝度プロファイルを作成
+                const horizontalProfile = new Float32Array(blockSize);
+                const verticalProfile = new Float32Array(blockSize);
+                
+                // プロファイルの計算
+                for (let i = 0; i < blockSize; i++) {
+                    let hSum = 0, vSum = 0;
+                    let hCount = 0, vCount = 0;
+                    
+                    for (let j = 0; j < blockSize; j++) {
+                        // 水平プロファイル
+                        if (bx + j < width && by + i < height) {
+                            const idx = ((by + i) * width + (bx + j)) * 4;
+                            hSum += (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                            hCount++;
+                        }
+                        
+                        // 垂直プロファイル
+                        if (bx + i < width && by + j < height) {
+                            const idx = ((by + j) * width + (bx + i)) * 4;
+                            vSum += (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                            vCount++;
+                        }
+                    }
+                    
+                    horizontalProfile[i] = hCount > 0 ? hSum / hCount : 0;
+                    verticalProfile[i] = vCount > 0 ? vSum / vCount : 0;
+                }
+                
+                // 自己相関による周期性の検出
+                const hPeriodicity = this.calculateAutocorrelation(horizontalProfile);
+                const vPeriodicity = this.calculateAutocorrelation(verticalProfile);
+                
+                return Math.max(hPeriodicity, vPeriodicity);
+            }
+            
+            // 自己相関による周期性スコアの計算
+            calculateAutocorrelation(profile) {
+                const len = profile.length;
+                let maxCorr = 0;
+                
+                // 異なる遅延での相関を計算
+                for (let lag = 2; lag < len / 3; lag++) {
+                    let correlation = 0;
+                    let count = 0;
+                    
+                    for (let i = 0; i < len - lag; i++) {
+                        correlation += profile[i] * profile[i + lag];
+                        count++;
+                    }
+                    
+                    if (count > 0) {
+                        correlation /= count;
+                        maxCorr = Math.max(maxCorr, correlation);
+                    }
+                }
+                
+                // 正規化
+                let variance = 0;
+                for (let i = 0; i < len; i++) {
+                    variance += profile[i] * profile[i];
+                }
+                variance /= len;
+                
+                return variance > 0 ? maxCorr / variance : 0;
+            }
+            
+            // 方向性エッジ検出
+            detectDirectionalEdges(data, width, height, threshold, sensitivity) {
+                const mask = new Float32Array(width * height);
+                
+                // 垂直・水平エッジ検出カーネル
+                const verticalKernel = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
+                const horizontalKernel = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+                
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        let vEdge = 0, hEdge = 0;
+                        
+                        // カーネルを適用
+                        for (let ky = -1; ky <= 1; ky++) {
+                            for (let kx = -1; kx <= 1; kx++) {
+                                const idx = ((y + ky) * width + (x + kx)) * 4;
+                                const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                                const kernelIdx = (ky + 1) * 3 + (kx + 1);
+                                
+                                vEdge += gray * verticalKernel[kernelIdx];
+                                hEdge += gray * horizontalKernel[kernelIdx];
+                            }
+                        }
+                        
+                        // 垂直または水平のエッジが強い場合
+                        const vStrength = Math.abs(vEdge);
+                        const hStrength = Math.abs(hEdge);
+                        const maxStrength = Math.max(vStrength, hStrength);
+                        
+                        // 方向性が強く、適度な強度のエッジを検出
+                        if (maxStrength > 5 * sensitivity && maxStrength < threshold * 2) {
+                            const directionality = Math.abs(vStrength - hStrength) / maxStrength;
+                            if (directionality > 0.3) {  // 閾値を下げて感度向上
+                                mask[y * width + x] = Math.min(1, maxStrength / (threshold * 1.5));
+                            }
+                        }
+                    }
+                }
+                
+                return mask;
+            }
+            
+            // マスクの精製
+            refineNetMask(mask, width, height) {
+                const refined = new Float32Array(mask.length);
+                
+                // 形態学的処理でノイズ除去と線の接続
+                for (let y = 2; y < height - 2; y++) {
+                    for (let x = 2; x < width - 2; x++) {
+                        const idx = y * width + x;
+                        
+                        if (mask[idx] > 0.05) {  // 閾値を下げて薄いネットも対象に
+                            // 近傍の接続性をチェック
+                            let connected = 0;
+                            const directions = [
+                                [-1, 0], [1, 0], [0, -1], [0, 1],
+                                [-2, 0], [2, 0], [0, -2], [0, 2]
+                            ];
                             
-                            // 垂直線チェック
-                            let verticalCount = 0;
-                            for (let dy = -lineThickness; dy <= lineThickness; dy++) {
-                                const ny = y + dy;
-                                if (ny >= 0 && ny < height && mask[ny * width + x] > 0) {
-                                    verticalCount++;
+                            for (const [dx, dy] of directions) {
+                                const nIdx = (y + dy) * width + (x + dx);
+                                if (mask[nIdx] > 0.05) {
+                                    connected++;
                                 }
                             }
                             
-                            // 水平線チェック
-                            let horizontalCount = 0;
-                            for (let dx = -lineThickness; dx <= lineThickness; dx++) {
-                                const nx = x + dx;
-                                if (nx >= 0 && nx < width && mask[y * width + nx] > 0) {
-                                    horizontalCount++;
-                                }
+                            // 接続性が高い場合は強調
+                            if (connected >= 2) {
+                                refined[idx] = Math.min(1, mask[idx] * 1.5);
+                            } else if (connected === 1) {
+                                refined[idx] = mask[idx];
                             }
-                            
-                            // 細い線状のパターンの場合のみ採用
-                            if (verticalCount > lineThickness || horizontalCount > lineThickness) {
-                                isLine = true;
-                            }
-                            
-                            if (isLine) {
-                                refined[y * width + x] = mask[y * width + x];
-                            }
+                            // 孤立点は除去（connected === 0）
                         }
                     }
                 }
                 
                 return refined;
             }
+            
+
             
             detectFocusAreas(imageData, width, height) {
                 const data = imageData.data;
@@ -638,7 +808,7 @@
                         const netStrength = netMask[mapIdx];
                         const focusStrength = focusMap[mapIdx];
                         
-                        if (netStrength > 0.1 && focusStrength < 0.5) {
+                        if (netStrength > 0.05 && focusStrength < 0.5) {
                             // 処理強度を計算（ピントが合っている部分ほど弱く）
                             const processingStrength = netStrength * (1 - focusStrength) * strength;
                             
@@ -682,7 +852,7 @@
                             const mapIdx = ny * width + nx;
                             
                             // ネットがなく、ある程度ピントが合っている点を採用
-                            if (netMask[mapIdx] < 0.1 || focusMap[mapIdx] > 0.3) {
+                            if (netMask[mapIdx] < 0.05 || focusMap[mapIdx] > 0.3) {
                                 const idx = mapIdx * 4;
                                 const distance = Math.sqrt((nx - x) ** 2 + (ny - y) ** 2);
                                 const weight = 1 / (1 + distance * 0.1);
