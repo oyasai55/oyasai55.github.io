@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>防球ネット除去ツール</title>
+    <title>防球ネット除去ツール - 高精度版</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -12,7 +12,7 @@
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 20px;
@@ -28,6 +28,7 @@
             gap: 10px;
             margin: 20px 0;
             flex-wrap: wrap;
+            align-items: center;
         }
         button {
             padding: 10px 20px;
@@ -59,18 +60,31 @@
         .file-label:hover {
             background: #218838;
         }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
         input[type="range"] {
             width: 200px;
         }
         .canvas-container {
-            position: relative;
+            display: flex;
+            gap: 20px;
             margin: 20px auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .canvas-wrapper {
             text-align: center;
+        }
+        .canvas-wrapper h3 {
+            margin: 10px 0;
         }
         canvas {
             border: 2px solid #ddd;
             max-width: 100%;
-            cursor: crosshair;
         }
         .info {
             background: #e9ecef;
@@ -78,30 +92,55 @@
             border-radius: 5px;
             margin: 20px 0;
         }
-        .mode-selector {
+        .method-selector {
             display: flex;
             gap: 10px;
             margin: 10px 0;
+            flex-wrap: wrap;
         }
-        .mode-selector label {
+        .method-selector label {
             display: flex;
             align-items: center;
             gap: 5px;
+            padding: 5px 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .method-selector input:checked + span {
+            font-weight: bold;
+        }
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 防球ネット除去ツール</h1>
+        <h1>🎯 防球ネット除去ツール - 背景ネット特化版</h1>
         
         <div class="info">
-            <h3>使い方：</h3>
-            <ol>
-                <li>画像を選択してください</li>
-                <li>モードを選択：自動除去 or 手動ブラシ</li>
-                <li>手動モード：ネット部分をクリック/ドラッグで選択</li>
-                <li>処理ボタンで実行</li>
-            </ol>
+            <h3>このツールの特徴：</h3>
+            <ul>
+                <li>被写体（選手）はそのまま保持</li>
+                <li>背景のぼやけたネットパターンを除去</li>
+                <li>複数の手法を組み合わせて高精度化</li>
+            </ul>
         </div>
 
         <div class="controls">
@@ -110,74 +149,82 @@
             </label>
             <input type="file" id="imageInput" accept="image/*">
             
-            <div class="mode-selector">
+            <div class="method-selector">
                 <label>
-                    <input type="radio" name="mode" value="auto" checked>
-                    自動検出
+                    <input type="radio" name="method" value="frequency" checked>
+                    <span>周波数フィルタ</span>
                 </label>
                 <label>
-                    <input type="radio" name="mode" value="manual">
-                    手動選択
+                    <input type="radio" name="method" value="edge">
+                    <span>エッジ保護型</span>
+                </label>
+                <label>
+                    <input type="radio" name="method" value="adaptive">
+                    <span>適応的除去</span>
+                </label>
+                <label>
+                    <input type="radio" name="method" value="combined">
+                    <span>統合処理（推奨）</span>
                 </label>
             </div>
             
-            <div id="manualControls" style="display: none;">
-                <label>ブラシサイズ: <span id="brushSizeLabel">20</span>px</label>
-                <input type="range" id="brushSize" min="5" max="50" value="20">
+            <div class="slider-container">
+                <label>処理強度:</label>
+                <input type="range" id="strength" min="1" max="10" value="5">
+                <span id="strengthLabel">5</span>
+            </div>
+            
+            <div class="slider-container">
+                <label>ネットの太さ:</label>
+                <input type="range" id="netThickness" min="1" max="20" value="5">
+                <span id="netThicknessLabel">5</span>px
             </div>
             
             <button id="processBtn" disabled>🔧 処理実行</button>
-            <button id="undoBtn" disabled>↩️ 元に戻す</button>
+            <button id="compareBtn" disabled>📊 比較表示</button>
             <button id="saveBtn" disabled>💾 保存</button>
         </div>
 
+        <div class="processing" id="processing">
+            <div class="spinner"></div>
+            <p>処理中... しばらくお待ちください</p>
+        </div>
+
         <div class="canvas-container">
-            <canvas id="canvas"></canvas>
+            <div class="canvas-wrapper">
+                <h3>元画像</h3>
+                <canvas id="originalCanvas"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+                <h3>処理結果</h3>
+                <canvas id="resultCanvas"></canvas>
+            </div>
         </div>
     </div>
 
     <script>
-        class NetRemover {
+        class AdvancedNetRemover {
             constructor() {
-                this.canvas = document.getElementById('canvas');
-                this.ctx = this.canvas.getContext('2d');
+                this.originalCanvas = document.getElementById('originalCanvas');
+                this.resultCanvas = document.getElementById('resultCanvas');
+                this.originalCtx = this.originalCanvas.getContext('2d');
+                this.resultCtx = this.resultCanvas.getContext('2d');
                 this.originalImage = null;
-                this.currentImage = null;
-                this.isDrawing = false;
-                this.mode = 'auto';
-                this.maskCanvas = document.createElement('canvas');
-                this.maskCtx = this.maskCanvas.getContext('2d');
-                
                 this.setupEventListeners();
             }
             
             setupEventListeners() {
-                const imageInput = document.getElementById('imageInput');
-                const processBtn = document.getElementById('processBtn');
-                const undoBtn = document.getElementById('undoBtn');
-                const saveBtn = document.getElementById('saveBtn');
-                const brushSizeInput = document.getElementById('brushSize');
-                const brushSizeLabel = document.getElementById('brushSizeLabel');
-                const modeInputs = document.querySelectorAll('input[name="mode"]');
-                const manualControls = document.getElementById('manualControls');
+                document.getElementById('imageInput').addEventListener('change', (e) => this.loadImage(e));
+                document.getElementById('processBtn').addEventListener('click', () => this.processImage());
+                document.getElementById('compareBtn').addEventListener('click', () => this.toggleComparison());
+                document.getElementById('saveBtn').addEventListener('click', () => this.save());
                 
-                imageInput.addEventListener('change', (e) => this.loadImage(e));
-                processBtn.addEventListener('click', () => this.processImage());
-                undoBtn.addEventListener('click', () => this.undo());
-                saveBtn.addEventListener('click', () => this.save());
-                
-                brushSizeInput.addEventListener('input', (e) => {
-                    brushSizeLabel.textContent = e.target.value;
+                document.getElementById('strength').addEventListener('input', (e) => {
+                    document.getElementById('strengthLabel').textContent = e.target.value;
                 });
                 
-                modeInputs.forEach(input => {
-                    input.addEventListener('change', (e) => {
-                        this.mode = e.target.value;
-                        manualControls.style.display = this.mode === 'manual' ? 'block' : 'none';
-                        if (this.mode === 'manual') {
-                            this.setupDrawing();
-                        }
-                    });
+                document.getElementById('netThickness').addEventListener('input', (e) => {
+                    document.getElementById('netThicknessLabel').textContent = e.target.value;
                 });
             }
             
@@ -199,8 +246,8 @@
             }
             
             displayImage(img) {
-                const maxWidth = 800;
-                const maxHeight = 600;
+                const maxWidth = 500;
+                const maxHeight = 500;
                 let width = img.width;
                 let height = img.height;
                 
@@ -210,239 +257,479 @@
                     height *= ratio;
                 }
                 
-                this.canvas.width = width;
-                this.canvas.height = height;
-                this.maskCanvas.width = width;
-                this.maskCanvas.height = height;
+                this.originalCanvas.width = width;
+                this.originalCanvas.height = height;
+                this.resultCanvas.width = width;
+                this.resultCanvas.height = height;
                 
-                this.ctx.drawImage(img, 0, 0, width, height);
-                this.currentImage = this.ctx.getImageData(0, 0, width, height);
+                this.originalCtx.drawImage(img, 0, 0, width, height);
+                this.resultCtx.drawImage(img, 0, 0, width, height);
             }
             
-            setupDrawing() {
-                const brushSize = document.getElementById('brushSize');
+            async processImage() {
+                const method = document.querySelector('input[name="method"]:checked').value;
+                const strength = parseInt(document.getElementById('strength').value);
+                const netThickness = parseInt(document.getElementById('netThickness').value);
                 
-                this.canvas.onmousedown = (e) => {
-                    this.isDrawing = true;
-                    this.draw(e);
-                };
+                document.getElementById('processing').style.display = 'block';
                 
-                this.canvas.onmousemove = (e) => {
-                    if (this.isDrawing) this.draw(e);
-                };
+                // 少し遅延を入れてUIを更新
+                await new Promise(resolve => setTimeout(resolve, 10));
                 
-                this.canvas.onmouseup = () => {
-                    this.isDrawing = false;
-                };
-                
-                this.canvas.ontouchstart = (e) => {
-                    e.preventDefault();
-                    this.isDrawing = true;
-                    const touch = e.touches[0];
-                    const rect = this.canvas.getBoundingClientRect();
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-                    this.draw({ offsetX: x, offsetY: y });
-                };
-                
-                this.canvas.ontouchmove = (e) => {
-                    e.preventDefault();
-                    if (this.isDrawing) {
-                        const touch = e.touches[0];
-                        const rect = this.canvas.getBoundingClientRect();
-                        const x = touch.clientX - rect.left;
-                        const y = touch.clientY - rect.top;
-                        this.draw({ offsetX: x, offsetY: y });
+                try {
+                    switch(method) {
+                        case 'frequency':
+                            await this.frequencyDomainFilter(strength, netThickness);
+                            break;
+                        case 'edge':
+                            await this.edgePreservingFilter(strength, netThickness);
+                            break;
+                        case 'adaptive':
+                            await this.adaptiveFilter(strength, netThickness);
+                            break;
+                        case 'combined':
+                            await this.combinedApproach(strength, netThickness);
+                            break;
                     }
-                };
-                
-                this.canvas.ontouchend = () => {
-                    this.isDrawing = false;
-                };
-            }
-            
-            draw(e) {
-                const rect = this.canvas.getBoundingClientRect();
-                const x = e.offsetX;
-                const y = e.offsetY;
-                const brushSize = parseInt(document.getElementById('brushSize').value);
-                
-                // マスクに描画
-                this.maskCtx.fillStyle = 'red';
-                this.maskCtx.globalAlpha = 0.5;
-                this.maskCtx.beginPath();
-                this.maskCtx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
-                this.maskCtx.fill();
-                
-                // キャンバスに半透明の赤で表示
-                this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
-                this.ctx.fill();
-            }
-            
-            processImage() {
-                if (!this.currentImage) return;
-                
-                if (this.mode === 'auto') {
-                    this.autoDetectAndRemove();
-                } else {
-                    this.manualInpaint();
+                    
+                    document.getElementById('compareBtn').disabled = false;
+                    document.getElementById('saveBtn').disabled = false;
+                } catch (error) {
+                    console.error('処理エラー:', error);
+                    alert('処理中にエラーが発生しました');
+                } finally {
+                    document.getElementById('processing').style.display = 'none';
                 }
-                
-                document.getElementById('undoBtn').disabled = false;
-                document.getElementById('saveBtn').disabled = false;
             }
             
-            autoDetectAndRemove() {
-                const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-                const data = imageData.data;
-                
-                // 簡易的なネット検出アルゴリズム
-                // 縦横の規則的なパターンを検出
-                for (let y = 0; y < this.canvas.height; y++) {
-                    for (let x = 0; x < this.canvas.width; x++) {
-                        const idx = (y * this.canvas.width + x) * 4;
-                        
-                        // グレースケール値を計算
-                        const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
-                        
-                        // 暗い線（ネット）を検出
-                        if (gray < 100) {
-                            // 周囲のピクセルから補間
-                            const surrounding = this.getSurroundingPixels(x, y, imageData);
-                            if (surrounding.length > 0) {
-                                const avg = this.averageColor(surrounding);
-                                data[idx] = avg.r;
-                                data[idx + 1] = avg.g;
-                                data[idx + 2] = avg.b;
-                            }
-                        }
-                    }
-                }
-                
-                this.ctx.putImageData(imageData, 0, 0);
-            }
-            
-            manualInpaint() {
-                const maskData = this.maskCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-                const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-                const data = imageData.data;
-                const mask = maskData.data;
-                
-                // マスクされた部分を周囲の色で補間
-                for (let y = 0; y < this.canvas.height; y++) {
-                    for (let x = 0; x < this.canvas.width; x++) {
-                        const idx = (y * this.canvas.width + x) * 4;
-                        
-                        // マスクされている場合
-                        if (mask[idx] > 0) {
-                            const surrounding = this.getUnmaskedSurroundingPixels(x, y, imageData, maskData);
-                            if (surrounding.length > 0) {
-                                const avg = this.averageColor(surrounding);
-                                data[idx] = avg.r;
-                                data[idx + 1] = avg.g;
-                                data[idx + 2] = avg.b;
-                            }
-                        }
-                    }
-                }
-                
-                this.ctx.putImageData(imageData, 0, 0);
-                
-                // マスクをクリア
-                this.maskCtx.clearRect(0, 0, this.maskCanvas.width, this.maskCanvas.height);
-            }
-            
-            getSurroundingPixels(x, y, imageData) {
-                const pixels = [];
+            // 周波数領域フィルタリング（FFTの簡易実装）
+            async frequencyDomainFilter(strength, thickness) {
+                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
                 const data = imageData.data;
                 const width = imageData.width;
                 const height = imageData.height;
                 
-                for (let dy = -3; dy <= 3; dy++) {
-                    for (let dx = -3; dx <= 3; dx++) {
-                        if (dx === 0 && dy === 0) continue;
+                // 各チャンネルごとに処理
+                for (let channel = 0; channel < 3; channel++) {
+                    const channelData = new Float32Array(width * height);
+                    
+                    // チャンネルデータを抽出
+                    for (let i = 0; i < width * height; i++) {
+                        channelData[i] = data[i * 4 + channel];
+                    }
+                    
+                    // 簡易的な周波数フィルタリング
+                    const filtered = this.simpleFrequencyFilter(channelData, width, height, strength, thickness);
+                    
+                    // データを戻す
+                    for (let i = 0; i < width * height; i++) {
+                        data[i * 4 + channel] = Math.max(0, Math.min(255, filtered[i]));
+                    }
+                }
+                
+                this.resultCtx.putImageData(imageData, 0, 0);
+            }
+            
+            // 簡易的な周波数フィルタ
+            simpleFrequencyFilter(data, width, height, strength, thickness) {
+                const result = new Float32Array(data.length);
+                const filterSize = thickness * 2 + 1;
+                
+                // ノッチフィルタの適用（縦横の周期的パターンを除去）
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        let sum = 0;
+                        let count = 0;
                         
+                        // 周囲のピクセルから平均を計算（ただし規則的な間隔は除外）
+                        for (let dy = -filterSize; dy <= filterSize; dy++) {
+                            for (let dx = -filterSize; dx <= filterSize; dx++) {
+                                // ネットの周期性を考慮して特定の間隔を除外
+                                if (Math.abs(dx % thickness) < 2 || Math.abs(dy % thickness) < 2) {
+                                    continue;
+                                }
+                                
+                                const nx = x + dx;
+                                const ny = y + dy;
+                                
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    sum += data[ny * width + nx];
+                                    count++;
+                                }
+                            }
+                        }
+                        
+                        const avg = count > 0 ? sum / count : data[y * width + x];
+                        const original = data[y * width + x];
+                        
+                        // 強度に応じてブレンド
+                        result[y * width + x] = original + (avg - original) * (strength / 10);
+                    }
+                }
+                
+                return result;
+            }
+            
+            // エッジ保護型フィルタ
+            async edgePreservingFilter(strength, thickness) {
+                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                
+                // エッジ検出
+                const edges = this.detectEdges(data, width, height);
+                
+                // バイラテラルフィルタの簡易版
+                const filtered = new Uint8ClampedArray(data.length);
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const idx = (y * width + x) * 4;
+                        const edgeStrength = edges[y * width + x];
+                        
+                        // エッジが強い部分は保護
+                        if (edgeStrength > 50) {
+                            filtered[idx] = data[idx];
+                            filtered[idx + 1] = data[idx + 1];
+                            filtered[idx + 2] = data[idx + 2];
+                            filtered[idx + 3] = data[idx + 3];
+                        } else {
+                            // エッジが弱い部分はフィルタリング
+                            const result = this.applyBilateralFilter(data, width, height, x, y, thickness, strength);
+                            filtered[idx] = result.r;
+                            filtered[idx + 1] = result.g;
+                            filtered[idx + 2] = result.b;
+                            filtered[idx + 3] = data[idx + 3];
+                        }
+                    }
+                }
+                
+                imageData.data.set(filtered);
+                this.resultCtx.putImageData(imageData, 0, 0);
+            }
+            
+            // エッジ検出（Sobelフィルタ）
+            detectEdges(data, width, height) {
+                const edges = new Float32Array(width * height);
+                const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
+                const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+                
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        let gx = 0, gy = 0;
+                        
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                const idx = ((y + dy) * width + (x + dx)) * 4;
+                                const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                                const kernelIdx = (dy + 1) * 3 + (dx + 1);
+                                
+                                gx += gray * sobelX[kernelIdx];
+                                gy += gray * sobelY[kernelIdx];
+                            }
+                        }
+                        
+                        edges[y * width + x] = Math.sqrt(gx * gx + gy * gy);
+                    }
+                }
+                
+                return edges;
+            }
+            
+            // バイラテラルフィルタ
+            applyBilateralFilter(data, width, height, x, y, size, strength) {
+                let sumR = 0, sumG = 0, sumB = 0, weightSum = 0;
+                const idx = (y * width + x) * 4;
+                const centerR = data[idx];
+                const centerG = data[idx + 1];
+                const centerB = data[idx + 2];
+                
+                for (let dy = -size; dy <= size; dy++) {
+                    for (let dx = -size; dx <= size; dx++) {
                         const nx = x + dx;
                         const ny = y + dy;
                         
                         if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            const idx = (ny * width + nx) * 4;
-                            pixels.push({
-                                r: data[idx],
-                                g: data[idx + 1],
-                                b: data[idx + 2]
-                            });
-                        }
-                    }
-                }
-                
-                return pixels;
-            }
-            
-            getUnmaskedSurroundingPixels(x, y, imageData, maskData) {
-                const pixels = [];
-                const data = imageData.data;
-                const mask = maskData.data;
-                const width = imageData.width;
-                const height = imageData.height;
-                
-                for (let radius = 1; radius <= 10; radius++) {
-                    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
-                        const nx = Math.round(x + Math.cos(angle) * radius);
-                        const ny = Math.round(y + Math.sin(angle) * radius);
-                        
-                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            const idx = (ny * width + nx) * 4;
+                            const nIdx = (ny * width + nx) * 4;
                             
-                            // マスクされていないピクセルのみ
-                            if (mask[idx] === 0) {
-                                pixels.push({
-                                    r: data[idx],
-                                    g: data[idx + 1],
-                                    b: data[idx + 2]
-                                });
-                            }
+                            // 空間的な重み
+                            const spatialWeight = Math.exp(-(dx * dx + dy * dy) / (2 * size * size));
+                            
+                            // 色の類似度による重み
+                            const colorDiff = Math.sqrt(
+                                Math.pow(data[nIdx] - centerR, 2) +
+                                Math.pow(data[nIdx + 1] - centerG, 2) +
+                                Math.pow(data[nIdx + 2] - centerB, 2)
+                            );
+                            const colorWeight = Math.exp(-(colorDiff * colorDiff) / (2 * strength * strength * 100));
+                            
+                            const weight = spatialWeight * colorWeight;
+                            
+                            sumR += data[nIdx] * weight;
+                            sumG += data[nIdx + 1] * weight;
+                            sumB += data[nIdx + 2] * weight;
+                            weightSum += weight;
                         }
                     }
-                    
-                    if (pixels.length >= 8) break;
                 }
-                
-                return pixels;
-            }
-            
-            averageColor(pixels) {
-                const sum = pixels.reduce((acc, pixel) => ({
-                    r: acc.r + pixel.r,
-                    g: acc.g + pixel.g,
-                    b: acc.b + pixel.b
-                }), { r: 0, g: 0, b: 0 });
                 
                 return {
-                    r: Math.round(sum.r / pixels.length),
-                    g: Math.round(sum.g / pixels.length),
-                    b: Math.round(sum.b / pixels.length)
+                    r: weightSum > 0 ? sumR / weightSum : centerR,
+                    g: weightSum > 0 ? sumG / weightSum : centerG,
+                    b: weightSum > 0 ? sumB / weightSum : centerB
                 };
             }
             
-            undo() {
-                if (this.originalImage) {
-                    this.displayImage(this.originalImage);
+            // 適応的フィルタ
+            async adaptiveFilter(strength, thickness) {
+                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                
+                // 局所的な統計量を計算
+                const stats = this.computeLocalStats(data, width, height, thickness);
+                
+                // 適応的にフィルタを適用
+                const filtered = new Uint8ClampedArray(data.length);
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const idx = (y * width + x) * 4;
+                        const statIdx = y * width + x;
+                        
+                        // 分散が高い部分（エッジやテクスチャ）は保護
+                        if (stats.variance[statIdx] > 1000) {
+                            filtered[idx] = data[idx];
+                            filtered[idx + 1] = data[idx + 1];
+                            filtered[idx + 2] = data[idx + 2];
+                        } else {
+                            // 分散が低い部分（平坦な領域）でネット除去
+                            const result = this.removePatternAdaptive(data, width, height, x, y, thickness, strength, stats);
+                            filtered[idx] = result.r;
+                            filtered[idx + 1] = result.g;
+                            filtered[idx + 2] = result.b;
+                        }
+                        filtered[idx + 3] = data[idx + 3];
+                    }
                 }
+                
+                imageData.data.set(filtered);
+                this.resultCtx.putImageData(imageData, 0, 0);
+            }
+            
+            // 局所統計量の計算
+            computeLocalStats(data, width, height, windowSize) {
+                const mean = new Float32Array(width * height);
+                const variance = new Float32Array(width * height);
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        let sum = 0, sumSq = 0, count = 0;
+                        
+                        for (let dy = -windowSize; dy <= windowSize; dy++) {
+                            for (let dx = -windowSize; dx <= windowSize; dx++) {
+                                const nx = x + dx;
+                                const ny = y + dy;
+                                
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    const idx = (ny * width + nx) * 4;
+                                    const gray = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+                                    sum += gray;
+                                    sumSq += gray * gray;
+                                    count++;
+                                }
+                            }
+                        }
+                        
+                        const m = sum / count;
+                        mean[y * width + x] = m;
+                        variance[y * width + x] = (sumSq / count) - (m * m);
+                    }
+                }
+                
+                return { mean, variance };
+            }
+            
+            // パターン適応除去
+            removePatternAdaptive(data, width, height, x, y, thickness, strength, stats) {
+                const idx = (y * width + x) * 4;
+                const statIdx = y * width + x;
+                
+                // 方向性を持つフィルタ（縦横のネットパターンに対応）
+                let sumR = 0, sumG = 0, sumB = 0, count = 0;
+                
+                // 十字方向のサンプリング（ネットを避ける）
+                const directions = [
+                    { dx: thickness + 1, dy: 0 },
+                    { dx: -(thickness + 1), dy: 0 },
+                    { dx: 0, dy: thickness + 1 },
+                    { dx: 0, dy: -(thickness + 1) },
+                    { dx: thickness + 1, dy: thickness + 1 },
+                    { dx: -(thickness + 1), dy: thickness + 1 },
+                    { dx: thickness + 1, dy: -(thickness + 1) },
+                    { dx: -(thickness + 1), dy: -(thickness + 1) }
+                ];
+                
+                for (const dir of directions) {
+                    const nx = x + dir.dx;
+                    const ny = y + dir.dy;
+                    
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                        const nIdx = (ny * width + nx) * 4;
+                        const nStatIdx = ny * width + nx;
+                        
+                        // 類似した統計的性質を持つピクセルのみ使用
+                        if (Math.abs(stats.mean[statIdx] - stats.mean[nStatIdx]) < 30) {
+                            sumR += data[nIdx];
+                            sumG += data[nIdx + 1];
+                            sumB += data[nIdx + 2];
+                            count++;
+                        }
+                    }
+                }
+                
+                if (count > 0) {
+                    const avgR = sumR / count;
+                    const avgG = sumG / count;
+                    const avgB = sumB / count;
+                    
+                    // 元の値とブレンド
+                    const blend = strength / 10;
+                    return {
+                        r: data[idx] + (avgR - data[idx]) * blend,
+                        g: data[idx + 1] + (avgG - data[idx + 1]) * blend,
+                        b: data[idx + 2] + (avgB - data[idx + 2]) * blend
+                    };
+                } else {
+                    return {
+                        r: data[idx],
+                        g: data[idx + 1],
+                        b: data[idx + 2]
+                    };
+                }
+            }
+            
+            // 統合アプローチ
+            async combinedApproach(strength, thickness) {
+                // まず周波数フィルタを適用
+                await this.frequencyDomainFilter(strength * 0.6, thickness);
+                
+                // 次にエッジ保護フィルタ
+                await this.edgePreservingFilter(strength * 0.4, thickness);
+                
+                // 最後に微調整
+                this.finalEnhancement();
+            }
+            
+            // 最終的な画質向上処理
+            finalEnhancement() {
+                const imageData = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
+                const data = imageData.data;
+                
+                // アンシャープマスクで細部を強調
+                const sharpened = this.unsharpMask(data, imageData.width, imageData.height, 0.5, 1);
+                
+                imageData.data.set(sharpened);
+                this.resultCtx.putImageData(imageData, 0, 0);
+            }
+            
+            // アンシャープマスク
+            unsharpMask(data, width, height, amount, radius) {
+                const blurred = this.gaussianBlur(data, width, height, radius);
+                const result = new Uint8ClampedArray(data.length);
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    for (let c = 0; c < 3; c++) {
+                        const sharp = data[i + c] + (data[i + c] - blurred[i + c]) * amount;
+                        result[i + c] = Math.max(0, Math.min(255, sharp));
+                    }
+                    result[i + 3] = data[i + 3];
+                }
+                
+                return result;
+            }
+            
+            // ガウシアンぼかし
+            gaussianBlur(data, width, height, radius) {
+                const result = new Uint8ClampedArray(data.length);
+                const kernel = this.createGaussianKernel(radius);
+                const kernelSize = kernel.length;
+                const halfSize = Math.floor(kernelSize / 2);
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        let r = 0, g = 0, b = 0, weightSum = 0;
+                        
+                        for (let ky = 0; ky < kernelSize; ky++) {
+                            for (let kx = 0; kx < kernelSize; kx++) {
+                                const nx = x + kx - halfSize;
+                                const ny = y + ky - halfSize;
+                                
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    const idx = (ny * width + nx) * 4;
+                                    const weight = kernel[ky] * kernel[kx];
+                                    
+                                    r += data[idx] * weight;
+                                    g += data[idx + 1] * weight;
+                                    b += data[idx + 2] * weight;
+                                    weightSum += weight;
+                                }
+                            }
+                        }
+                        
+                        const idx = (y * width + x) * 4;
+                        result[idx] = r / weightSum;
+                        result[idx + 1] = g / weightSum;
+                        result[idx + 2] = b / weightSum;
+                        result[idx + 3] = data[idx + 3];
+                    }
+                }
+                
+                return result;
+            }
+            
+            // ガウシアンカーネルの生成
+            createGaussianKernel(radius) {
+                const size = Math.ceil(radius * 2) + 1;
+                const kernel = new Float32Array(size);
+                const sigma = radius / 3;
+                let sum = 0;
+                
+                for (let i = 0; i < size; i++) {
+                    const x = i - Math.floor(size / 2);
+                    kernel[i] = Math.exp(-(x * x) / (2 * sigma * sigma));
+                    sum += kernel[i];
+                }
+                
+                // 正規化
+                for (let i = 0; i < size; i++) {
+                    kernel[i] /= sum;
+                }
+                
+                return kernel;
+            }
+            
+            toggleComparison() {
+                // 簡易的な比較表示（元画像と結果を交互に表示）
+                const temp = this.resultCtx.getImageData(0, 0, this.resultCanvas.width, this.resultCanvas.height);
+                this.resultCtx.drawImage(this.originalCanvas, 0, 0);
+                setTimeout(() => {
+                    this.resultCtx.putImageData(temp, 0, 0);
+                }, 1000);
             }
             
             save() {
                 const link = document.createElement('a');
                 link.download = 'net_removed_' + Date.now() + '.png';
-                link.href = this.canvas.toDataURL();
+                link.href = this.resultCanvas.toDataURL();
                 link.click();
             }
         }
         
         // アプリを初期化
-        const app = new NetRemover();
+        const app = new AdvancedNetRemover();
     </script>
 </body>
 </html>
