@@ -2,24 +2,51 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>防球ネット除去ツール（改良版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防球ネット除去ツール（Gabor縦横検出対応）</title>
   <style>
-    canvas { border: 1px solid #ccc; margin: 10px; }
+    body { font-family: sans-serif; padding: 1em; margin: 0; background: #f5f5f5; }
+    canvas { border: 1px solid #ccc; margin: 10px 0; max-width: 100%; height: auto; }
+    input[type="range"] { width: 100%; }
+    label { display: block; margin-top: 1em; }
+    .controls { max-width: 600px; margin: auto; background: white; padding: 1em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .row { display: flex; flex-wrap: wrap; justify-content: space-around; }
   </style>
 </head>
 <body>
-  <h1>防球ネット除去ツール</h1>
-  <input type="file" id="upload" accept="image/*">
-  <button id="process">処理</button><br>
-  <canvas id="source"></canvas>
-  <canvas id="result"></canvas>
+  <div class="controls">
+    <h2>防球ネット除去ツール（Gabor縦横検出対応）</h2>
+    <input type="file" id="upload" accept="image/*">
+    <label>感度: <input type="range" id="sensitivity" min="1" max="100" value="50"></label>
+    <label>処理強度: <input type="range" id="strength" min="1" max="100" value="70"></label>
+    <button id="process">🔧 処理</button>
+    <button id="save">💾 保存</button>
+    <label><input type="checkbox" id="showMask" checked> 検出マスクを表示</label>
+  </div>
+
+  <div class="row">
+    <div>
+      <h3>元画像</h3>
+      <canvas id="source"></canvas>
+    </div>
+    <div>
+      <h3>処理結果</h3>
+      <canvas id="result"></canvas>
+    </div>
+    <div>
+      <h3>検出マスク</h3>
+      <canvas id="mask"></canvas>
+    </div>
+  </div>
 
   <script>
     const upload = document.getElementById('upload');
     const sourceCanvas = document.getElementById('source');
     const resultCanvas = document.getElementById('result');
+    const maskCanvas = document.getElementById('mask');
     const sourceCtx = sourceCanvas.getContext('2d');
     const resultCtx = resultCanvas.getContext('2d');
+    const maskCtx = maskCanvas.getContext('2d');
     let img;
 
     upload.addEventListener('change', (e) => {
@@ -29,8 +56,8 @@
       reader.onload = () => {
         img = new Image();
         img.onload = () => {
-          sourceCanvas.width = resultCanvas.width = img.width;
-          sourceCanvas.height = resultCanvas.height = img.height;
+          sourceCanvas.width = resultCanvas.width = maskCanvas.width = img.width;
+          sourceCanvas.height = resultCanvas.height = maskCanvas.height = img.height;
           sourceCtx.drawImage(img, 0, 0);
         };
         img.src = reader.result;
@@ -39,57 +66,99 @@
     });
 
     document.getElementById('process').addEventListener('click', () => {
-      if (!img) return;
+      const sens = parseInt(document.getElementById('sensitivity').value);
+      const strength = parseInt(document.getElementById('strength').value) / 100;
+      const showMask = document.getElementById('showMask').checked;
+
       const imageData = sourceCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
       const data = imageData.data;
       const w = imageData.width;
       const h = imageData.height;
-      const result = new Uint8ClampedArray(data);
 
-      for (let y = 3; y < h - 3; y++) {
-        for (let x = 3; x < w - 3; x++) {
-          const i = (y * w + x) * 4;
-          const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
-
-          const vertical = (getGray(x, y - 3) + getGray(x, y + 3)) / 2;
-          const horizontal = (getGray(x - 3, y) + getGray(x + 3, y)) / 2;
-          const avgAround = (vertical + horizontal) / 2;
-
-          const contrast = Math.abs(gray - avgAround);
-          if (gray < avgAround - 8 && contrast < 15) {
-            const [r, g, b] = blurAround(x, y);
-            result[i] = r;
-            result[i + 1] = g;
-            result[i + 2] = b;
-          }
-        }
+      const gray = new Float32Array(w * h);
+      for (let i = 0; i < w * h; i++) {
+        gray[i] = (data[i * 4] + data[i * 4 + 1] + data[i * 4 + 2]) / 3;
       }
 
-      resultCtx.putImageData(new ImageData(result, w, h), 0, 0);
+      const mask = new Float32Array(w * h);
+      const kernelVert = createGaborKernel(5, 0, 5, 0.5);     // 縦方向
+      const kernelHorz = createGaborKernel(5, Math.PI / 2, 5, 0.5); // 横方向
+      const convV = convolve(gray, w, h, kernelVert);
+      const convH = convolve(gray, w, h, kernelHorz);
 
-      function getGray(x, y) {
-        if (x < 0 || y < 0 || x >= w || y >= h) return 255;
-        const i = (y * w + x) * 4;
-        return (data[i] + data[i + 1] + data[i + 2]) / 3;
+      for (let i = 0; i < w * h; i++) {
+        const score = Math.max(convV[i], convH[i]);
+        mask[i] = score > sens ? 1 : 0;
       }
 
-      function blurAround(x, y) {
-        let r = 0, g = 0, b = 0, count = 0;
-        for (let dy = -2; dy <= 2; dy++) {
-          for (let dx = -2; dx <= 2; dx++) {
-            const nx = x + dx, ny = y + dy;
-            if (nx >= 0 && ny >= 0 && nx < w && ny < h) {
-              const ni = (ny * w + nx) * 4;
-              r += data[ni];
-              g += data[ni + 1];
-              b += data[ni + 2];
-              count++;
+      const out = new Uint8ClampedArray(data);
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = y * w + x;
+          if (mask[i]) {
+            for (let c = 0; c < 3; c++) {
+              const idx = i * 4 + c;
+              const blur = (data[idx - 4] + data[idx + 4] + data[idx - w * 4] + data[idx + w * 4]) / 4;
+              out[idx] = out[idx] * (1 - strength) + blur * strength;
             }
           }
         }
-        return [r / count, g / count, b / count];
+      }
+
+      resultCtx.putImageData(new ImageData(out, w, h), 0, 0);
+
+      if (showMask) {
+        const maskData = maskCtx.createImageData(w, h);
+        for (let i = 0; i < w * h; i++) {
+          const v = mask[i] * 255;
+          maskData.data[i * 4] = v;
+          maskData.data[i * 4 + 1] = 0;
+          maskData.data[i * 4 + 2] = 0;
+          maskData.data[i * 4 + 3] = 255;
+        }
+        maskCtx.putImageData(maskData, 0, 0);
       }
     });
+
+    document.getElementById('save').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = 'net_removed.png';
+      a.href = resultCanvas.toDataURL();
+      a.click();
+    });
+
+    function createGaborKernel(ksize, theta, lambda, gamma) {
+      const kernel = [];
+      const half = Math.floor(ksize / 2);
+      for (let y = -half; y <= half; y++) {
+        for (let x = -half; x <= half; x++) {
+          const x_theta = x * Math.cos(theta) + y * Math.sin(theta);
+          const y_theta = -x * Math.sin(theta) + y * Math.cos(theta);
+          const val = Math.exp(-(x_theta ** 2 + gamma ** 2 * y_theta ** 2) / (2 * lambda ** 2)) * Math.cos(2 * Math.PI * x_theta / lambda);
+          kernel.push(val);
+        }
+      }
+      return { data: kernel, size: ksize };
+    }
+
+    function convolve(src, w, h, kernel) {
+      const dst = new Float32Array(w * h);
+      const half = Math.floor(kernel.size / 2);
+      for (let y = half; y < h - half; y++) {
+        for (let x = half; x < w - half; x++) {
+          let sum = 0;
+          for (let ky = -half; ky <= half; ky++) {
+            for (let kx = -half; kx <= half; kx++) {
+              const val = src[(y + ky) * w + (x + kx)];
+              const kval = kernel.data[(ky + half) * kernel.size + (kx + half)];
+              sum += val * kval;
+            }
+          }
+          dst[y * w + x] = sum;
+        }
+      }
+      return dst;
+    }
   </script>
 </body>
 </html>
