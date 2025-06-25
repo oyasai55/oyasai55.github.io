@@ -443,11 +443,15 @@
                         }
                         
                         // 各検出結果を統合（最大値を採用）
-                        netMask[i] = Math.max(
-                            contrastMask[i] * 0.5,    // 局所コントラストの重みを上げる
-                            frequencyMask[i] * 0.4,   // 周波数解析の重みも上げる
-                            directionalMask[i] * 0.3
-                        );
+                        const c = contrastMask[i];
+                        const f = frequencyMask[i];
+                        const d = directionalMask[i];
+                        
+                        if (c > 0.2 && f > 0.15 && d > 0.15) {
+                            netMask[i] = (c + f + d) / 3; // 平均スコア
+                        } else {
+                            netMask[i] = 0; // 弱い箇所は除外
+                        }
                     }
                     
                     // 5. ノイズ除去と細線化
@@ -663,8 +667,8 @@
                 for (let y = 2; y < height - 2; y++) {
                     for (let x = 2; x < width - 2; x++) {
                         const idx = y * width + x;
-                        
-                        if (mask[idx] > 0.05) {  // 閾値を下げて薄いネットも対象に
+                        const minThreshold = 0.05 + (1 - sensitivity) * 0.1; // 感度が低いほど厳しく
+                        if (mask[idx] > minThreshold) {  // 閾値を下げて薄いネットも対象に
                             // 近傍の接続性をチェック
                             let connected = 0;
                             const directions = [
