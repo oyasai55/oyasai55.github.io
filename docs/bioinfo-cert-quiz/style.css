@@ -500,6 +500,72 @@ h1 {
     display: none;
 }
 
+/* お知らせカード */
+.notice-item {
+    background: var(--bg-primary);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+.notice-item:hover {
+    transform: translateX(3px);
+}
+
+.notice-item.info {
+    border-left-color: #3b82f6;
+}
+
+.notice-item.update {
+    border-left-color: #10b981;
+}
+
+.notice-item.warning {
+    border-left-color: #f59e0b;
+}
+
+.notice-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.notice-date-small {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.notice-badge-small {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.notice-badge-small.info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.notice-badge-small.update {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.notice-badge-small.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.notice-message-small {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 footer {
     text-align: center;
     margin-top: 50px;

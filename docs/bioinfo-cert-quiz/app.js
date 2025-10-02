@@ -34,6 +34,7 @@ window.onload = () => {
     initYearSelection();
     initEventListeners();
     initThemeToggle();
+    loadNotices();
     console.log('初期化完了');
 };
 
@@ -86,6 +87,41 @@ function initYearSelection() {
 function toggleYearSelection(button) {
     button.classList.toggle('selected');
 }
+
+// お知らせを読み込む
+async function loadNotices() {
+    const noticeArea = document.getElementById('recent-notices');
+    if (!noticeArea) return;
+
+    try {
+        const res = await fetch('data/notice.json');
+        if (!res.ok) throw new Error('読み込み失敗');
+
+        const data = await res.json();
+        const notices = data.notices || [];
+
+        noticeArea.innerHTML = '';
+
+        if (notices.length === 0) {
+            noticeArea.innerHTML =
+              '<p style="text-align:center; color: var(--text-secondary);">現在お知らせはありません。</p>';
+            return;
+        }
+
+        // 最新3件を表示
+        notices.slice(0, 3).forEach(n => {
+            const div = document.createElement('div');
+            div.className = `notice-item notice-${n.type}`;
+            div.innerHTML = `<strong>${n.date}</strong> - ${n.message}`;
+            noticeArea.appendChild(div);
+        });
+    } catch (e) {
+        console.error('お知らせ読み込みエラー:', e);
+        noticeArea.innerHTML =
+          '<p style="text-align:center; color: red;">お知らせの読み込みに失敗しました。</p>';
+    }
+}
+
 
 // クイズを開始
 async function startQuiz() {
