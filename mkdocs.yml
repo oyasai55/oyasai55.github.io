@@ -20,6 +20,7 @@ theme:
     
 nav:
   - Home: index.md
+  - Bioinfo Cert Quiz: bioinfo-cert-quiz/bioinfo-cert-quiz.html
   - Tools:
       - 防球ネット除去ツール: tools/net-remover.md
 # TwitterやGithubのリンクを指定できる

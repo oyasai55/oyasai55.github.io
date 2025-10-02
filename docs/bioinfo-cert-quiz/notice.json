@@ -1,0 +1,17 @@
+{
+  "notices": [
+    {
+      "date": "2025-10-02",
+      "type": "info",
+      "message": "現在準備されている問題は2007年のみです"
+    },
+    {
+      "date": "2025-10-02",
+      "type": "update",
+      "message": "バイオインフォマティクス技術者試験過去問の非公式学習用サイトを構築中です！"
+    }
+  ],
+  "availableYears": [2007],
+  "totalYears": 17,
+  "lastUpdate": "2025-10-02"
+}

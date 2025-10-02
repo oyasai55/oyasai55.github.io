@@ -1,0 +1,1201 @@
+[
+    {
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 1,
+    "question_text": "次に示す図は、真核生物の細胞を模式的に描いたものである。（ア）から（オ）で示している細胞内小器官のうち、ミトコンドリア、ゴルジ体（ゴルジ装置）、核に相当するものはどれか。選択肢の中から、正しい組み合わせを一つ選べ。",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "3",
+    "explanation": "",
+    "images": ["2007-000.png", "2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "次に示した細胞内小器官名の中で、タンパク質に対する糖鎖の付加、カルシウムイオンの貯蔵並びに脂質の合成の場として機能している細胞内小器官はどれか。選択肢の中から一つ選べ。",
+    "options": {
+        "1": "ミトコンドリア",
+        "2": "葉緑体",
+        "3": "小胞体",
+        "4": "核"
+    },
+    "answer": "3",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 3,
+    "question_text": "細胞分裂における細胞周期では、細胞の状態は４つの「期」に分けられて解釈されている。この細胞周期における４つの期の順序として適するものを選択肢の中から一つ選べ。ただし、G0 期は考慮しないものとする。",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["2007-001.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 4,
+    "question_text": "ヒトの染色体に関する次の記述のうち、もっとも適切ではないものはどれか。一つ選べ。",
+    "options": {
+        "1": "間期の細胞では、染色体は核の中に存在する。",
+        "2": "体細胞には、46 本の染色体が存在する。",
+        "3": "ヒトの染色体は、環状である。",
+        "4": "染色体の末端には、テロメアと呼ばれる配列が存在する。"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "次に示した遺伝子の発現に関する文章の中で、不適切なものはどれか。一つ選べ。",
+    "options": {
+        "1": "ゲノムから mRNA さらにタンパク質への遺伝情報の流れは、セントラルドグマと呼ばれている。",
+        "2": "真核生物のゲノムには、RNA ポリメラーゼが結合するプロモーターの他、エンハンサーやサイレンサーと呼ばれる転写調節領域がある。",
+        "3": "細胞の維持に不可欠な遺伝子群はハウスキーピング遺伝子と呼ばれる。",
+        "4": "真核生物においては、全ての遺伝子の情報が転写・翻訳されタンパク質として機能している。"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 6,
+    "question_text": "次に示したゲノム DNA（染色体 DNA）に関する説明文の中で、不適切なものはどれか。一つ選べ。",
+    "options": {
+        "1": "原核生物には、核が存在しない。",
+        "2": "真核生物のゲノム DNA は、ヒストンに巻きついてヌクレオソーム構造を形成している。",
+        "3": "真核生物においては、高等生物になるほど染色体の数が多くなっている。",
+        "4": "原核生物のゲノム DNA は、ほとんどの場合環状である。"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 7,
+    "question_text": "ある生物種の遺伝に関する観察結果について書かれた 4 つの説明文の中に不適切なものが一つ含まれている。選択肢の中から一つ選べ。\n\n観察結果\n「この生物は二倍体で有性生殖する。また、この生物の常染色体上には、体色に関係する対立遺伝子 A と a がコードされていることがわかっている。体色が赤で AA の遺伝子型を有する雄と、体色が白で aa の遺伝子型を有する雌を交配させたところ、その第一世代の子孫の体色は全て赤であった。」",    "options": {
+        "1": "A は優性遺伝子で、a は劣性遺伝子である。",
+        "2": "第一世代の子孫の遺伝子型は、Aa である。",
+        "3": "第一世代の子孫同士を交配させた時、第二世代の子孫では、体色が赤の個体と白の個体の比率は、3：1 となる。",
+        "4": "第一世代の子孫同士を交配させた時、第二世代の子孫にもっとも多く見られる遺伝子型は AA である。"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 8,
+    "question_text": "遺伝情報を保持する DNA の化学構造に関する次の説明文について、[ a ]から[ d ]内に入る語句の組み合わせとしてもっとも適切なものを選択肢の中から一つ選べ。\n「DNA 鎖は、ヌクレオチドがリン酸を介した[ a ]結合によって連結し高分子を形成している。遺伝情報は、DNA 鎖に結合した塩基の並びによって保持されている。この塩基には4 種類あり、A（アデニン）と T（チミン）の塩基は[ b ]本、G（グアニン）と C（シトシン）の塩基は[ c ]本の[ d ]結合を形成し 2 本の DNA 鎖による二重らせん構造を維持している。 」",
+    "options": {
+        "1": "[ a ]水素                   [ b ]2  [ c ]  3   [ d ]ホスホジエステル",
+        "2": "[ a ]水素                   [ b ]3  [ c ]  2   [ d ]ホスホジエステル",
+        "3": "[ a ]ホスホジエステル       [ b ]2  [ c ]  3   [ d ]水素",
+        "4": "[ a ]ホスホジエステル       [ b ]3  [ c ]  2   [ d ]水素"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 9,
+    "question_text": "次に示したアミノ酸の組み合わせの中で、中性条件下で負電荷を帯びたアミノ酸の組み合わせはどれか。一つ選べ。ここで、それぞれのアミノ酸は 3 文字表記によって記されている。",
+    "options": {
+        "1": "Val、Leu、Ile",
+        "2": "Trp、Tyr",
+        "3": "Asp、Glu",
+        "4": "Lys、Arg、His"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 10,
+    "question_text": "ゲノム DNA に保持された遺伝情報は、まず、mRNA に転写され、次に、この mRNA が 3文字ずつ翻訳され、アミノ酸が連結されることによってタンパク質が合成される。この翻訳において、翻訳開始の合図として利用されているコドン（開始コドン）は一つであり、あるアミノ酸もコードしている。この開始コドンの配列とコードされているアミノ酸の組み合わせとして適切なものを選択肢の中から一つ選べ。\nただし、遺伝暗号として、普遍遺伝暗号が用いられているとする。",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": [ "./data/images/2007/2007-10sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 11,
+    "question_text": "翻訳によって合成されたタンパク質には、様々な化学物質が結合されることが分かっており翻訳後修飾と呼ばれる。次に示した語句の中で、この翻訳後修飾とは関係がないものを一つ選べ。",
+    "options": {
+        "1": "ユビキチン化",
+        "2": "アセチル化",
+        "3": "ジアゾ化",
+        "4": "リン酸化"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 12,
+    "question_text": "ゲノム DNA に結合して転写調節機能を担うタンパク質群を転写因子と呼んでいる。転写因子の持つ DNA 結合領域の構造の中で特徴的なものには、呼び名が付けられている。次に示した用語の中で、転写因子の構造の呼び名と関係の低いものを一つ選べ。",
+    "options": {
+        "1": "ロイシンジッパー",
+        "2": "ジンクフィンガー",
+        "3": "ヘリックス－ターン－へリックス",
+        "4": "バレル"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 13,
+    "question_text": "タンパク質の二次構造に関する次の記述について、[ a ]から[ c ]内に入る語句の組合せとしてもっとも適切なものはどれか。選択肢の中から一つ選べ。\n\n「タンパク質中にもっとも多く存在する二次構造は[ a ]であり、アミノ酸残基の主鎖のカルボキシル基と 4 残基離れたアミノ酸残基のアミノ基の間に水素結合を形成する。一方、[ b ]は、主鎖が伸長した状態で形成され、平行または逆平行に隣接した他の[ b ]との間で水素結合を形成し、[ c ]と呼ばれる構造を作る。」",
+    "options": {
+        "1": "[ a ] αへリックス         [ b ] βストランド           [ c ] βターン",
+        "2": "[ a ] βストランド         [ b ] αへリックス           [ c ] βターン",
+        "3": "[ a ] αへリックス         [ b ] βストランド           [ c ] βシート",
+        "4": "[ a ] βストランド         [ b ] αへリックス           [ c ] βシート"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 14,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+},
+{
+    "year": 2007,
+    "field": "生命科学",
+    "question_number": 5,
+    "question_text": "",
+    "options": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4"
+    },
+    "answer": "",
+    "explanation": "",
+    "images": ["./data/images/2007/2007-000.ppm", "./data/images/2007/2007-1sentakushi.png"]
+}
+]

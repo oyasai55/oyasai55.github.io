@@ -1,9 +1,7 @@
 # Oyasai's Portforio
 
 ---
-## :bootstrap-north-star: Degree
-
- :bootstrap-graduation-cap-solid: AAA
+## :bootstrap-north-star: Degree :bootstrap-graduation-cap-solid:
 
 * Bachelor of Engineering
 * Master of Sports Wellness
