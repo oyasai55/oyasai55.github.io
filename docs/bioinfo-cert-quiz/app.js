@@ -58,8 +58,24 @@ function initThemeToggle() {
     });
 }
 
+// JSONファイルの存在確認
+async function checkYearDataExists(year) {
+    try {
+        const res = await fetch(`data/${year}.json`, { method: 'HEAD' });
+        return res.ok;
+    } catch (e) {
+        // HEADメソッドが使えない場合はGETで試す
+        try {
+            const res = await fetch(`data/${year}.json`);
+            return res.ok;
+        } catch (err) {
+            return false;
+        }
+    }
+}
+
 // 年度選択画面を初期化
-function initYearSelection() {
+async function initYearSelection() {
     console.log('年度選択画面を初期化中...');
     const yearSelection = document.getElementById('year-selection');
     
@@ -68,23 +84,41 @@ function initYearSelection() {
         return;
     }
     
-    yearSelection.innerHTML = '';
+    yearSelection.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">年度データを確認中...</p>';
     
-    availableYears.forEach(year => {
+    // 各年度のデータ存在確認
+    const yearButtons = [];
+    for (const year of availableYears) {
+        const exists = await checkYearDataExists(year);
+        yearButtons.push({ year, exists });
+        console.log(`${year}年度: ${exists ? '✓ データあり' : '✗ データなし'}`);
+    }
+    
+    // ボタンを生成（データが存在する年度のみ）
+    yearSelection.innerHTML = '';
+    const availableYearButtons = yearButtons.filter(({ exists }) => exists);
+    
+    if (availableYearButtons.length === 0) {
+        yearSelection.innerHTML = '<p style="text-align:center; color: red;">利用可能な年度データがありません。</p>';
+        console.log('⚠️ 利用可能な年度データがありません');
+        return;
+    }
+    
+    availableYearButtons.forEach(({ year }) => {
         const button = document.createElement('button');
         button.className = 'year-button';
         button.textContent = `${year}年度`;
         button.dataset.year = year;
         button.onclick = (e) => toggleYearSelection(e.target);
         yearSelection.appendChild(button);
-        console.log(`✓ ${year}年度ボタンを追加`);
     });
     
-    console.log('年度選択画面の初期化完了');
+    console.log(`年度選択画面の初期化完了 (${availableYearButtons.length}年度分)`);
 }
 
 // 年度選択のトグル
 function toggleYearSelection(button) {
+    if (button.disabled) return;
     button.classList.toggle('selected');
 }
 

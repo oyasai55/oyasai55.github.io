@@ -1,0 +1,303 @@
+[
+    {
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 1,
+    "question_text": "以下に示すデータは、フラットファイル形式で記された RefSeq のエントリーである。ここから読み取れる情報として、もっとも不適切なものを選択肢の中から 1 つ選べ。\n\n\nLOCUS       NC_045512             29903 bp ss-RNA    linear   VRL 30-\nMAR-2020\nDEFINITION Severe acute respiratory syndrome coronavirus 2 isolate\nWuhan-Hu-1,\n          complete genome.\nACCESSION NC_045512\nVERSION     NC_045512.2\nDBLINK     BioProject: PRJNA485481\nKEYWORDS    RefSeq.\nSOURCE       Severe acute respiratory syndrome coronavirus 2 (SARS-\nCoV-2)\n  ORGANISM Severe acute respiratory syndrome coronavirus 2\n          Viruses;     Riboviria;     Orthornavirae;    Pisuviricota;\nPisoniviricetes;\n          Nidovirales;         Cornidovirineae;        Coronaviridae;\nOrthocoronavirinae;\n          Betacoronavirus; Sarbecovirus.\n\n                                                    == 中略 ==\n\nFEATURES                        Location/Qualifiers\n    source                      1..29903\n                               /organism=\"Severe   acute                         respiratory               syndrome\ncoronavirus\n                               2\"\n                               /mol_type=\"genomic RNA\"\n                               /isolate=\"Wuhan-Hu-1\"\n                               /host=\"Homo sapiens\"\n                               /db_xref=\"taxon:2697049\"\n                               /country=\"China\"\n                               /collection_date=\"Dec-2019\"\n       5'UTR                    1..265\n       gene                     266..21555\n                           /gene=\"ORF1ab\"\n                           /locus_tag=\"GU280_gp01\"\n                           /db_xref=\"GeneID:43740578\"\n          CDS              join(266..13468,13468..21555)\n                           /gene=\"ORF1ab\"\n                           /locus_tag=\"GU280_gp01\"\n                           /ribosomal_slippage\n                           /note=\"pp1ab;   translated    by              -1     ribosomal\n     frameshift\"\n                           /codon_start=1\n                           /product=\"ORF1ab polyprotein\"\n                           /protein_id=\"YP_009724389.1\"\n                           /db_xref=\"GeneID:43740578\"\n\n                                          == 後略 ==\n",
+    "options": {
+        "1": "2019 年 12 月に中国でヒトより分離されたウイルス（Severe acute respiratory syndrome coronavirus 2）のコンプリートゲノム配列である。",
+        "2": "266 塩基から 21555 塩基にかけてタンパク質をコードする遺伝子があり、この間の塩基配列を抜き出してそのまま翻訳することでそのアミノ酸配列を得ることができる。",
+        "3": "分類学的には、コロナウイルス科（Coronaviridae）のオルソコロナウイルス亜科（Orthocoronavirinae）のベータコロナウイルス属（Betacoronavirus）に属する。",
+        "4": "ゲノムサイズは約 30 kb で、直鎖状の一本鎖 RNA である。"
+    },
+    "answer": "2",
+    "explanation": "各選択肢について正否を検討する。\n     1. Source の欄に/collection_date=\"Dec-2019\"、/country=\"China\"、/host=\"Homo sapiens\"とあり、また DEFINITION の欄に Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome.とあるため、この選択肢は正しい。\n2. CDS の欄に、/ribosomal_slippage および/note=\"pp1ab; translated by -1 ribosomal frameshift\"とあることから、この領域はリボソームフレームシフト(コドンの読み枠が途中でずれる現象)を伴って翻訳される。よって塩基配列をそのまま翻訳しても正しいアミノ酸配列が得られるわけではなく、誤った選択肢である。\n3. ORGANISM の欄に、Coronaviridae; Orthocoronavirinae; Betacoronavirus;とあるため、この選択肢は正しい。\n4. LOCUS の欄に 29903 bp ss-RNA linear とあるため、この選択肢は正しい。",
+    "images": []
+},    
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "以下の⽂章は、アミノ酸の配列類似性を評価するスコアについて述べたものである。もっとも不適切なものを選択肢から⼀つ選べ。",
+    "options": {
+        "1": "PAM や BLOSUM などのアミノ酸類似性スコア⾏列において、負の値をとるアミノ酸  対は、相同なアラインメント中に出現する頻度が、ランダムな場合に期待される頻度と  ⽐べて⼩さいことを意味している。",
+        "2": "局所アラインメントを⾏う場合、⼀般に⾮相同な配列対に対しては最適アラインメント  のスコアは負の値となる。",
+        "3": "アミノ酸類似性スコア⾏列 PAM100 においては、アミノ酸 100 残基当たり 100 回の置  換が起きている程度の進化距離にある相同配列を基準としてスコアを定義している。",
+        "4": "PAM や BLOSUM などのアミノ酸類似性スコア⾏列において、アミノ酸対 A、B につ  いて、A に対する B のスコアと B に対する A のスコアはつねに等しい。"
+    },
+    "answer": "2",
+    "explanation": "各選択肢について正否を検討する。\n1. スコア⾏列においてはスコアの定義は対数オッズ log( qab/papb )に基づいている。ここで、qab はアラインメント中でアミノ酸 a とアミノ酸 b が縦に揃う頻度であり、pa 及び pb はアラインメントにおけるアミノ酸 a, b の出現頻度を意味する。スコアが負の値であるとは、qab< papb であるから、ランダムな場合に期待される頻度に⽐べても qab が⼩さいことを意味する。よって選択肢は正しい。\n2. 局所アラインメント(ローカルアラインメント)では、アラインメントスコアが必ず 0 以上になるため、負の値になることはない。よってこの選択肢は正しくない。\n3. PAM1 は 100 残基あたり 1 回の頻度で置換が起きる時間での置換確率⾏列であり、それを100 乗したものが PAM100 である。よって選択肢は正しい。\n4. 上記のスコアの計算⽅法から鑑みて、この⾏列は対称⾏列となる。よって選択肢はただしい。",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 3,
+    "question_text": "以下は、異なるスコアづけによって同じ配列のグローバルアラインメントを⾏なった結果を表している。各スコア定義において、より⾼いスコアを持つアラインメントの組み合わせとして、もっとも適切なものを選択肢の中から⼀つ選べ。\n\nスコア(A)：⼀致 +2、不⼀致 –1、ギャップ開始 –6、ギャップ延⻑ –1\nスコア(B)：⼀致 +2、不⼀致 –2、ギャップ開始 –2、ギャップ延⻑ –2\n\nアラインメント 1\nACAGTCGAGCAT\nACAG--G-GCAT\n\nアラインメント 2\nACAGTCGAGCAT\nACA---GGGCAT",
+    "options": {
+        "1": "(A) アラインメント 1 (B) アラインメント 1",
+        "2": "(A) アラインメント 1 (B) アラインメント 2",
+        "3": "(A) アラインメント 2 (B) アラインメント 1",
+        "4": "(A) アラインメント 2 (B) アラインメント 2"
+    },
+    "answer": "3",
+    "explanation": "実際にアラインメントスコアを計算する。\nスコア A でアラインメント 1 を計算すると、⼀致箇所: 9, 不⼀致箇所: 0, ギャップ開始:2 箇所, ギャップ延⻑: 1 箇所であり、そのスコアは 9*2 -6*2-1*1 = 5 となる。続いてスコアA でアラインメント 2 を計算すると、⼀致箇所: 8, 不⼀致箇所: 1, ギャップ開始: 1 箇所, ギャップ延⻑: 2 箇所であり、そのスコアは 8*2 ‒ 1*1 - 6*1-1*2 = 7 となる。よってスコア(A)ではアラインメント 2 の⽅が⾼いスコアとなる。\n次にスコア B でアラインメント 1 を計算すると、9*2 -2*2-2*1 = 12 となり、アラインメント 2 を計算すると、8*2 ‒ 2*1 - 2*1-2*2 = 8 となる。よってスコア(B)ではアラインメント 1 の⽅が⾼いスコアとなる。",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 4,
+    "question_text": "RNA-seq データを⽤いて転写産物の発現量を測定する際は、転写産物にマッピングされたリードの数を、転写産物の⻑さや総リード数で補正する必要がある。TPM (transcripts permillion)はそのような補正⽅法の⼀つであり、次の式で計算される。ただし、𝐶𝑖 は転写産物𝑖にマッピングされたリード数であり、𝐿𝑖 は転写産物𝑖の有効配列⻑とする。\n\nさて、RNA-seq 実験を⾏い、次表のデータが得られたとする（簡単にするため、転写産物は表中の３つのみとする）\n\nこのデータを解析した結果を述べた次の⽂中において、空欄(a), (b)に当てはまる語句の組み合わせとしてもっとも適切なものはどれか。選択肢の中から⼀つ選べ。\n\nTPM がもっとも⼤きかった転写産物は(a)であり、その値は(b)である。",
+    "options": {
+        "1": "(a) X (b) 5 × 10#",
+        "2": "(a) Y (b) 5 × 10#",
+        "3": "(a) X (b) 4 × 10#",
+        "4": "(a) Y (b) 4 × 10#"
+    },
+    "answer": "1",
+    "explanation": "誘導に従って TPM を計算する。まず各転写産物の Ti を計算すると、Tx = 10, Ty = 8, Tz = 2となる。この総和は 20 であることから、各転写産物の TPMi を計算すると、TPMx = 5 * 105, TPMy = 4 * 105, TPMx = 1 * 105 となる。",
+    "images": ["2024-000.png", "2024-001.png"]
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+},
+{
+    "year": 2024,
+    "field": "生命科学",
+    "question_number": 2,
+    "question_text": "",
+    "options": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+    },
+    "answer": "",
+    "explanation": "",
+    "images": []
+}
+
+]
