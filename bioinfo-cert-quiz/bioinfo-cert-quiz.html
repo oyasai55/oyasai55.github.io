@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バイオインフォマティクス技術者認定試験 過去問学習</title>
+    <link rel="stylesheet" href="style.css">
+
+    <meta charset="UTF-8">
+    <title>問題表示ページ</title>
+
+    <!-- MathJax読み込み（先に読み込む） -->
+    <script>
+        window.MathJax = {
+        tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+        svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <!-- あなたのJSを後に読み込む -->
+    <script src="main.js" defer></script>
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧬 バイオインフォマティクス技術者認定試験</h1>
+            <p class="subtitle">過去問学習アプリ</p>
+            <button id="theme-toggle" style="margin-top: 15px; padding: 8px 20px; background: var(--bg-primary); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: var(--text-primary);">
+                🌙 ダークモード
+            </button>
+        </header>
+
+        <!-- 年度選択画面 -->
+        <div id="start-screen">
+            <div class="screen-header">
+                <h2>学習設定</h2>
+                <p>年度と出題モードを選択してください</p>
+            </div>
+
+            <!-- 年度選択 -->
+            <div class="setting-section">
+                <h3>📅 年度選択</h3>
+                <div id="year-selection">
+                    <!-- 年度ボタンが動的に生成されます -->
+                </div>
+            </div>
+
+            <!-- 分野フィルタ -->
+            <div class="setting-section">
+                <h3>🔬 分野フィルタ（複数選択可）</h3>
+                <div id="field-filter">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="生命科学" checked>
+                        <span>生命科学</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="計算科学" checked>
+                        <span>計算科学</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="バイオインフォマティクス分野" checked>
+                        <span>バイオインフォマティクス</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 出題モード -->
+            <div class="setting-section">
+                <h3>🎲 出題モード</h3>
+                <div id="mode-selection">
+                    <label class="mode-radio">
+                        <input type="radio" name="mode" value="sequential" checked>
+                        <span>順番に出題</span>
+                    </label>
+                    <label class="mode-radio">
+                        <input type="radio" name="mode" value="random">
+                        <span>ランダム出題</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="start-button" class="button">学習を開始する</button>
+            
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 1.1rem;">📢 お知らせ</h3>
+                    <a href="notices.html" style="color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600;">すべてのお知らせ →</a>
+                </div>
+                <div id="recent-notices">
+                    <p style="text-align: center; color: var(--text-secondary);">読み込み中...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 問題画面 -->
+        <div id="quiz-container">
+            <div class="quiz-header">
+                <div class="progress-info">
+                    <span id="current-year"></span> |
+                    <span id="current-mode"></span> |
+                    問題 <span id="current-number">1</span> / <span id="total-number">0</span>
+                </div>
+                <div class="score-display">
+                    <div class="score-item">
+                        正解: <span class="score-value" id="correct-count">0</span>
+                    </div>
+                    <div class="score-item">
+                        正答率: <span class="score-value" id="percentage">0</span>%
+                    </div>
+                </div>
+            </div>
+
+            <div id="question-area">
+                <div class="question-meta">
+                    <span class="field-badge" id="field-badge"></span>
+                </div>
+                <h2 id="question-text"></h2>
+                <div id="image-area"></div>
+                <ul id="options"></ul>
+            </div>
+
+            <div id="result-display">
+                <div class="result-content">
+                    <span class="result-icon"></span>
+                    <span class="result-message"></span>
+                </div>
+            </div>
+
+            <!-- 解説表示エリア -->
+            <div id="explanation-area">
+                <h3>📖 解説</h3>
+                <p id="explanation-text"></p>
+            </div>
+
+            <div class="button-group">
+                <button id="back-button" class="button secondary">← TOPへ戻る</button>
+                <button id="next-button" class="button">次の問題へ →</button>
+            </div>
+        </div>
+
+        <footer>
+            <p id="source-note" style="margin-bottom: 15px;">出典: 日本バイオインフォマティクス学会（JSBi）バイオインフォマティクス技術者認定試験 過去問題より</p>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 15px;">
+                <p style="margin-bottom: 8px;"><strong>【免責事項】</strong></p>
+                <p>本アプリは学習支援を目的とした非公式ツールです。問題内容の正確性、最新性について保証するものではありません。本アプリの利用により生じたいかなる損害についても、開発者は責任を負いかねます。正式な試験情報は日本バイオインフォマティクス学会の公式サイトをご確認ください。</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
