@@ -263,8 +263,19 @@ function showQuestion() {
     fieldBadge.className = `field-badge ${q.field}`;
     
     // 問題文を表示
-    document.getElementById('question-text').textContent = 
-        `問${q.question_number}. ${q.question_text}`;
+    //document.getElementById('question-text').textContent = 
+    //    `問${q.question_number}. ${q.question_text}`;
+    const qText = `問${q.question_number}. ${q.question_text}`;
+const qElem = document.getElementById('question-text');
+
+// textContent → innerHTML に変更（MathJaxがHTMLを読むため）
+qElem.innerHTML = qText;
+
+// MathJaxで再描画
+if (window.MathJax) {
+  MathJax.typesetPromise([qElem]);
+}
+
     
     // 画像を表示
     const imageArea = document.getElementById('image-area');
@@ -361,15 +372,22 @@ function checkAnswer(selected, correctAnswer, explanation) {
 function showExplanation(explanation) {
     const explanationArea = document.getElementById('explanation-area');
     const explanationText = document.getElementById('explanation-text');
-    
+
     if (explanation && explanation.trim() !== '') {
-        explanationText.textContent = explanation;
-        explanationArea.style.display = 'block';
+        // ✅ textContent → innerHTML に変更
+        explanationText.innerHTML = explanation;
     } else {
-        explanationText.textContent = 'この問題には解説がありません。';
-        explanationArea.style.display = 'block';
+        explanationText.innerHTML = 'この問題には解説がありません。';
+    }
+
+    explanationArea.style.display = 'block';
+
+    // ✅ MathJaxで数式をレンダリング（この要素内のみ）
+    if (window.MathJax) {
+        MathJax.typesetPromise([explanationText]);
     }
 }
+
 
 // 次の問題へ
 function nextQuestion() {
